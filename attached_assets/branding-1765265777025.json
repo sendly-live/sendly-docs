@@ -1,0 +1,119 @@
+{
+  "colorScheme": "light",
+  "fonts": [
+    {
+      "family": "Inter",
+      "role": "body"
+    },
+    {
+      "family": "PP Formula",
+      "role": "display"
+    }
+  ],
+  "colors": {
+    "primary": "#DEF6E7",
+    "accent": "#2AB673",
+    "background": "#FFFFFF",
+    "textPrimary": "#3E4543",
+    "link": "#E6FCF7"
+  },
+  "typography": {
+    "fontFamilies": {
+      "primary": "Inter",
+      "heading": "PP Formula"
+    },
+    "fontStacks": {
+      "heading": [
+        "PP Formula",
+        "-apple-system",
+        "BlinkMacSystemFont",
+        "Segoe UI",
+        "system-ui",
+        "sans-serif"
+      ],
+      "body": [
+        "Inter",
+        "-apple-system",
+        "BlinkMacSystemFont",
+        "Segoe UI",
+        "system-ui",
+        "sans-serif"
+      ],
+      "paragraph": [
+        "Inter",
+        "-apple-system",
+        "BlinkMacSystemFont",
+        "Segoe UI",
+        "system-ui",
+        "sans-serif"
+      ]
+    },
+    "fontSizes": {
+      "h1": "30px",
+      "h2": "30px",
+      "body": "12px"
+    }
+  },
+  "spacing": {
+    "baseUnit": 4,
+    "borderRadius": "10px"
+  },
+  "components": {
+    "input": {
+      "borderColor": "#CCCCCC",
+      "borderRadius": "10px"
+    },
+    "buttonPrimary": {
+      "background": "#2AB673",
+      "textColor": "#FFFFFF",
+      "borderRadius": "12px",
+      "shadow": "none"
+    },
+    "buttonSecondary": {
+      "background": "#FFFFFF",
+      "textColor": "#707675",
+      "borderRadius": "12px",
+      "shadow": "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(158, 165, 163, 0.3) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px"
+    }
+  },
+  "images": {
+    "logo": "File saved at: attached_assets/logo.svg",
+    "favicon": "File saved at: attached_assets/favicon.png",
+    "ogImage": "https://telnyx.mintlify.app/mintlify-assets/_next/image?url=%2F_mintlify%2Fapi%2Fog%3Fdivision%3DAssistants%26title%3DList%2Bassistants%26description%3DRetrieve%2Ba%2Blist%2Bof%2Ball%2BAI%2BAssistants%2Bconfigured%2Bby%2Bthe%2Buser.%26logoLight%3Dhttps%253A%252F%252Fmintcdn.com%252Ftelnyx%252Fxn1_sRFb2OFugXz5%252Fimages%252Fimg%252Flogo.svg%253Ffit%253Dmax%2526auto%253Dformat%2526n%253Dxn1_sRFb2OFugXz5%2526q%253D85%2526s%253D12ce58850f34c22c15897c4cdb957983%26logoDark%3Dhttps%253A%252F%252Fmintcdn.com%252Ftelnyx%252FxZcrHP3A1y0uHRE9%252Fimages%252Fimg%252Flogo-dark.svg%253Ffit%253Dmax%2526auto%253Dformat%2526n%253DxZcrHP3A1y0uHRE9%2526q%253D85%2526s%253D2f06b147968206163dd8ae20dcc1bc46%26primaryColor%3D%252304E3AA%26lightColor%3D%252304E3AA%26darkColor%3D%252300E3AA%26backgroundLight%3D%2523ffffff%26backgroundDark%3D%2523090d0e&w=1200&q=100"
+  },
+  "__framework_hints": [
+    "Mintlify"
+  ],
+  "__llm_logo_reasoning": {
+    "selectedIndex": 0,
+    "reasoning": "Logo #0 is the only visible logo that matches the brand name 'Telnyx' and links to the homepage, making it the primary brand logo.",
+    "confidence": 0.9
+  },
+  "__llm_button_reasoning": {
+    "primary": {
+      "index": 0,
+      "text": "Try it",
+      "reasoning": "Button #0 has a vibrant green background (#2AB673) and action-oriented text 'Try it', making it the primary call-to-action. It stands out due to its color and purpose."
+    },
+    "secondary": {
+      "index": 1,
+      "text": "Search...Ctrl K",
+      "reasoning": "Button #1 has a white background, which is distinctly different from the primary button's vibrant color. It serves a less prominent action ('Search...Ctrl K'), making it suitable as the secondary button."
+    },
+    "confidence": 0.95
+  },
+  "personality": {
+    "tone": "modern",
+    "energy": "medium",
+    "targetAudience": "developers and tech professionals"
+  },
+  "designSystem": {
+    "framework": "tailwind",
+    "componentLibrary": "unknown"
+  },
+  "confidence": {
+    "buttons": 0.95,
+    "colors": 0.9,
+    "overall": 0.925
+  }
+}

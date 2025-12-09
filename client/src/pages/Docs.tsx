@@ -1,95 +1,174 @@
+import { useRef, useEffect, useState } from "react";
 import { DocsLayout } from "@/components/layout/DocsLayout";
 import { CodeBlock } from "@/components/ui/CodeBlock";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowRight, Globe, Lock, Play } from "lucide-react";
+import { ArrowRight, Globe, Lock, Play, Bot, Copy, Sparkles } from "lucide-react";
+import { useLocation } from "wouter";
+import { cn } from "@/lib/utils";
 
 export default function Docs() {
+  const [location] = useLocation();
+  const [activeSection, setActiveSection] = useState("intro");
+  const rightColumnRef = useRef<HTMLDivElement>(null);
+  
+  // Refs for scroll syncing
+  const sectionRefs = {
+    intro: useRef<HTMLElement>(null),
+    auth: useRef<HTMLElement>(null),
+    listAssistants: useRef<HTMLElement>(null),
+  };
+
+  const codeRefs = {
+    intro: useRef<HTMLDivElement>(null),
+    auth: useRef<HTMLDivElement>(null),
+    listAssistants: useRef<HTMLDivElement>(null),
+  };
+
+  // Setup intersection observer to track active section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            setActiveSection(id);
+            
+            // Scroll the right column to the matching code block
+            const codeBlock = codeRefs[id as keyof typeof codeRefs]?.current;
+            if (codeBlock && rightColumnRef.current) {
+              codeBlock.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          }
+        });
+      },
+      { threshold: 0.3, rootMargin: "-20% 0px -50% 0px" }
+    );
+
+    Object.values(sectionRefs).forEach((ref) => {
+      if (ref.current) observer.observe(ref.current);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleAiCopy = () => {
+    const content = `
+    Docs: List Assistants API
+    Endpoint: GET /v2/ai/assistants
+    Description: Retrieve a list of all AI Assistants configured by the user.
+    Auth: Bearer Token required
+    Response: JSON object containing list of assistants with id, name, model, tools, and settings.
+    Example Code (Node.js):
+    const client = new Telnyx({ apiKey: process.env.TELNYX_API_KEY });
+    const list = await client.ai.assistants.list();
+    `;
+    navigator.clipboard.writeText(content);
+    // You would typically show a toast here
+  };
+
   return (
     <DocsLayout>
-      <div className="flex flex-col xl:flex-row min-h-screen">
+      <div className="flex flex-col xl:flex-row min-h-[calc(100vh-4rem)]">
+        
         {/* Left/Center Content Column */}
         <div className="flex-1 px-8 py-12 max-w-4xl mx-auto xl:mx-0 xl:max-w-none xl:w-[60%] border-r border-border/50">
-          <div className="space-y-12">
+          <div className="space-y-24">
             
-            {/* Header Section */}
-            <section className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
-                <Badge variant="outline" className="text-primary border-primary/50 bg-primary/10 rounded-full px-3 py-1">API v2.0</Badge>
-                <span className="text-sm text-muted-foreground">Updated Dec 8, 2025</span>
-              </div>
-              <h1 className="text-5xl font-bold tracking-tight text-foreground font-sans">
-                Messaging API
-              </h1>
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                Send and receive SMS, MMS, and WhatsApp messages globally. Our API is built for speed, reliability, and developer happiness.
-              </p>
-              <div className="flex items-center gap-4 pt-4">
-                <Button className="bg-primary text-black hover:bg-primary/90 font-semibold h-12 px-6">
-                  Get API Key <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
-                <Button variant="outline" className="border-border text-foreground hover:bg-secondary h-12 px-6">
-                  View Status
-                </Button>
-              </div>
-            </section>
-
-            {/* Authentication Section */}
-            <section id="auth" className="space-y-6 pt-12 border-t border-border/50">
-              <h2 className="text-3xl font-bold text-foreground">Authentication</h2>
-              <p className="text-muted-foreground leading-relaxed">
-                The DevDocs API uses API keys to authenticate requests. You can view and manage your API keys in the Dashboard.
-              </p>
-              
-              <div className="bg-card border border-border rounded-lg p-6 space-y-4">
-                <div className="flex items-center gap-3 text-primary">
-                  <Lock className="w-5 h-5" />
-                  <span className="font-semibold">Security Note</span>
+            {/* Header / Intro Section */}
+            <section id="intro" ref={sectionRefs.intro} className="space-y-6 scroll-mt-24">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Badge variant="outline" className="text-primary border-primary/50 bg-primary/10 rounded-full px-3 py-1">AI v1.0</Badge>
+                  <span className="text-sm text-muted-foreground">Updated Dec 9, 2025</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2 text-primary border-primary/20 hover:bg-primary/10 hover:text-primary"
+                  onClick={handleAiCopy}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Copy for AI
+                </Button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                  <span>AI</span>
+                  <ArrowRight className="w-3 h-3" />
+                  <span>Assistants</span>
+                </div>
+                <h1 className="text-5xl font-bold tracking-tight text-foreground font-sans">
+                  List assistants
+                </h1>
+                <p className="text-xl text-muted-foreground leading-relaxed">
+                  Retrieve a list of all AI Assistants configured by the user. 
+                  This endpoint returns a paginated list of assistants sorted by creation date.
                 </p>
               </div>
+
+              <div className="flex items-center gap-4 pt-4">
+                <div className="flex items-center gap-2 bg-sidebar border border-border rounded-lg p-1.5 pr-4 w-full max-w-md">
+                   <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20 rounded ml-1">GET</Badge>
+                   <code className="text-sm font-mono text-foreground flex-1">/ai/assistants</code>
+                   <Button size="sm" className="h-7 bg-primary text-black hover:bg-primary/90 font-bold">Try it</Button>
+                </div>
+              </div>
             </section>
 
-            {/* Endpoint: Send Message */}
-            <section id="send-message" className="space-y-8 pt-12 border-t border-border/50">
-              <div className="flex items-center gap-4">
-                <span className="px-3 py-1 rounded bg-green-500/10 text-green-500 font-mono text-sm font-bold border border-green-500/20">POST</span>
-                <code className="text-lg font-mono text-foreground">/v2/messages</code>
+            {/* Authorizations Section */}
+            <section id="auth" ref={sectionRefs.auth} className="space-y-6 pt-8 border-t border-border/50 scroll-mt-24">
+              <h2 className="text-3xl font-bold text-foreground">Authorizations</h2>
+              <div className="bg-card border border-border rounded-lg p-6">
+                <div className="flex items-start gap-4">
+                  <div className="mt-1">
+                     <Lock className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="space-y-4">
+                     <div className="flex items-center gap-3">
+                       <code className="text-primary font-mono font-bold">Authorization</code>
+                       <span className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded">header</span>
+                       <span className="text-xs text-red-400 bg-red-400/10 px-2 py-1 rounded border border-red-400/20">required</span>
+                     </div>
+                     <p className="text-sm text-muted-foreground leading-relaxed">
+                       Bearer authentication header of the form <code className="text-foreground bg-secondary px-1 py-0.5 rounded">Bearer &lt;token&gt;</code>, where <code className="text-foreground bg-secondary px-1 py-0.5 rounded">&lt;token&gt;</code> is your auth token.
+                     </p>
+                  </div>
+                </div>
               </div>
-              
-              <h2 className="text-3xl font-bold text-foreground">Send a message</h2>
-              <p className="text-muted-foreground">
-                Send a message to a specific phone number. The message can be an SMS, MMS, or WhatsApp message.
-              </p>
+            </section>
+
+             {/* Response Schema Section */}
+             <section id="listAssistants" ref={sectionRefs.listAssistants} className="space-y-8 pt-8 border-t border-border/50 scroll-mt-24">
+              <h2 className="text-3xl font-bold text-foreground">Response</h2>
+              <p className="text-muted-foreground">Successful Response returns a list of Assistant objects.</p>
 
               <div className="space-y-6">
-                <h3 className="text-lg font-semibold text-foreground">Body Parameters</h3>
                 <div className="border border-border rounded-lg overflow-hidden">
-                  <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono text-muted-foreground">
-                    <div className="col-span-3">Parameter</div>
-                    <div className="col-span-2">Type</div>
-                    <div className="col-span-7">Description</div>
+                  <div className="flex items-center justify-between p-4 border-b border-border bg-secondary/30">
+                     <span className="font-mono text-sm font-bold text-green-500">200 OK</span>
+                     <span className="text-xs text-muted-foreground font-mono">application/json</span>
                   </div>
                   
                   <div className="divide-y divide-border">
-                    <div className="grid grid-cols-12 gap-4 p-4 text-sm">
-                      <div className="col-span-3 font-mono text-primary">to</div>
-                      <div className="col-span-2 font-mono text-muted-foreground">string</div>
-                      <div className="col-span-7 text-muted-foreground">The destination phone number in E.164 format.</div>
-                    </div>
-                    <div className="grid grid-cols-12 gap-4 p-4 text-sm">
-                      <div className="col-span-3 font-mono text-primary">from</div>
-                      <div className="col-span-2 font-mono text-muted-foreground">string</div>
-                      <div className="col-span-7 text-muted-foreground">Your DevDocs phone number or Sender ID.</div>
-                    </div>
-                    <div className="grid grid-cols-12 gap-4 p-4 text-sm">
-                      <div className="col-span-3 font-mono text-primary">text</div>
-                      <div className="col-span-2 font-mono text-muted-foreground">string</div>
-                      <div className="col-span-7 text-muted-foreground">The content of the message. Max 1600 characters.</div>
-                    </div>
+                    {[
+                      { name: "data", type: "object[]", desc: "List of assistant objects", req: true },
+                      { name: "data.id", type: "string", desc: "Unique identifier for the assistant", req: true },
+                      { name: "data.name", type: "string", desc: "The user-friendly name of the assistant", req: true },
+                      { name: "data.model", type: "string", desc: "ID of the model to use (e.g. gpt-4)", req: true },
+                      { name: "data.tools", type: "array", desc: "List of tools enabled for this assistant", req: false },
+                    ].map((row, i) => (
+                      <div key={i} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 text-sm hover:bg-white/5 transition-colors">
+                        <div className="col-span-4 font-mono text-primary truncate" title={row.name}>{row.name}</div>
+                        <div className="col-span-3 font-mono text-muted-foreground text-xs">{row.type}</div>
+                        <div className="col-span-5 text-muted-foreground flex items-start justify-between gap-2">
+                          <span>{row.desc}</span>
+                          {row.req && <span className="text-[10px] text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded border border-red-400/20">required</span>}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -97,74 +176,91 @@ export default function Docs() {
           </div>
         </div>
 
-        {/* Right Column - Code Snippets (Sticky) */}
-        <div className="hidden xl:block w-[40%] bg-sidebar/50 border-l border-border p-8 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto custom-scrollbar">
-          <div className="space-y-12">
+        {/* Right Column - Sticky Code Panel */}
+        <div className="hidden xl:block w-[40%] bg-[#050505] border-l border-border sticky top-16 h-[calc(100vh-4rem)]">
+          <div 
+            ref={rightColumnRef} 
+            className="h-full overflow-y-auto custom-scrollbar p-8 space-y-32 scroll-smooth"
+          >
             
-            {/* Auth Snippet */}
-            <div className="space-y-4">
+            {/* Intro / Request Code */}
+            <div ref={codeRefs.intro} className="space-y-4 pt-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Authentication</h3>
-              </div>
-              <CodeBlock 
-                filename="auth_setup.js"
-                language="javascript"
-                code={`import { DevDocs } from '@devdocs/sdk';
-
-const client = new DevDocs({
-  apiKey: process.env.DEVDOCS_API_KEY
-});
-
-// Client is now ready to use`}
-              />
-            </div>
-
-            {/* Request Snippet */}
-            <div className="space-y-4 pt-12">
-               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Request</h3>
                 <div className="flex gap-2">
-                   <Badge variant="secondary" className="text-xs cursor-pointer hover:bg-primary hover:text-black transition-colors">Node</Badge>
-                   <Badge variant="outline" className="text-xs cursor-pointer hover:bg-primary hover:text-black transition-colors">Python</Badge>
-                   <Badge variant="outline" className="text-xs cursor-pointer hover:bg-primary hover:text-black transition-colors">cURL</Badge>
+                   <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/20 hover:bg-primary/30 cursor-pointer">JavaScript</Badge>
+                   <Badge variant="outline" className="cursor-pointer hover:bg-white/10">Python</Badge>
+                   <Badge variant="outline" className="cursor-pointer hover:bg-white/10">cURL</Badge>
+                </div>
+                <div className="flex gap-2">
+                   <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground"><Copy className="w-3 h-3" /></Button>
                 </div>
               </div>
               
-              <Tabs defaultValue="node" className="w-full">
-                <CodeBlock 
-                  filename="send_message.js"
-                  language="javascript"
-                  code={`const message = await client.messages.create({
-  to: '+15558675309',
-  from: '+15017250604',
-  text: 'Hello from DevDocs! 🚀'
+              <CodeBlock 
+                filename="list_assistants.js"
+                language="javascript"
+                code={`import Telnyx from 'telnyx';
+
+const client = new Telnyx({
+  apiKey: process.env.TELNYX_API_KEY
 });
 
-console.log(message.sid);`}
-                />
-              </Tabs>
+// Retrieve list of all assistants
+const assistantsList = await client.ai.assistants.list();
+
+console.log(assistantsList.data);`}
+              />
             </div>
 
-             {/* Response Snippet */}
-             <div className="space-y-4">
+            {/* Auth Code Placeholders (if any specific auth code needed, usually handled globally) */}
+             <div ref={codeRefs.auth} className="space-y-4 opacity-50 hover:opacity-100 transition-opacity">
+               <div className="flex items-center gap-2 text-muted-foreground text-sm uppercase tracking-wider font-mono">
+                 <Lock className="w-3 h-3" /> Auth Header
+               </div>
+               <CodeBlock 
+                 language="bash"
+                 code={`Authorization: Bearer <YOUR_API_KEY>`}
+               />
+             </div>
+
+
+             {/* Response Code */}
+             <div ref={codeRefs.listAssistants} className="space-y-4">
                <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Response</h3>
-                <span className="text-xs font-mono text-green-500">200 OK</span>
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
+                  <span className="text-sm font-medium text-foreground">Response</span>
+                </div>
+                <span className="text-xs font-mono text-green-500 bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">200 OK</span>
               </div>
               <CodeBlock 
                 language="json"
+                className="max-h-[600px] overflow-y-auto"
                 code={`{
-  "sid": "SM8760542c864d1a92",
-  "date_created": "2025-12-08T17:05:00.000Z",
-  "date_updated": "2025-12-08T17:05:00.000Z",
-  "direction": "outbound-api",
-  "to": "+15558675309",
-  "from": "+15017250604",
-  "body": "Hello from DevDocs! 🚀",
-  "status": "queued",
-  "error_code": null,
-  "price": null,
-  "price_unit": "USD"
+  "data": [
+    {
+      "id": "443e2645-8137-4d1a-8260-062402170327",
+      "name": "Support Bot",
+      "created_at": "2023-11-07T05:31:56Z",
+      "model": "gpt-4",
+      "instructions": "You are a helpful support assistant.",
+      "description": "Tier 1 Customer Support",
+      "tools": [
+        {
+          "type": "webhook",
+          "webhook": {
+            "name": "check_order",
+            "url": "https://api.store.com/orders",
+            "method": "GET"
+          }
+        }
+      ],
+      "voice_settings": {
+        "voice": "alloy",
+        "voice_speed": 1.0
+      }
+    }
+  ]
 }`}
               />
             </div>

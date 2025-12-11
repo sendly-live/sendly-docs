@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 export default function Docs() {
   const [location] = useLocation();
   const [activeSection, setActiveSection] = useState<string>("");
-  const [smartScrollEnabled, setSmartScrollEnabled] = useState(true);
+  const [smartScrollEnabled, setSmartScrollEnabled] = useState(false);
   const rightColumnRef = useRef<HTMLDivElement>(null);
   
   // Get content based on current path

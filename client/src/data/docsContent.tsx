@@ -1172,6 +1172,980 @@ console.log('Delivered at:', message.deliveredAt);`,
     ],
   },
 
+  "/docs/messages/schedule": {
+    title: "Schedule Messages",
+    subtitle: "Schedule SMS messages for future delivery.",
+    updatedAt: "Dec 16, 2025",
+    sections: [
+      {
+        id: "schedule",
+        title: "Schedule a Message",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Schedule messages to be sent at a specific time in the future.
+              Useful for reminders, appointments, and time-sensitive
+              notifications.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-green-500/10 text-green-500 border-green-500/20 font-bold"
+              >
+                POST
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/messages/schedule
+              </code>
+            </div>
+
+            <h3 className="font-semibold text-foreground mt-8 mb-4 text-lg">
+              Request Body
+            </h3>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Parameter</div>
+                <div className="col-span-2">Type</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">to</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Destination phone number in E.164 format (required)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">text</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Message content, 1-1600 characters (required)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    scheduledAt
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    ISO 8601 timestamp for when to send (required, must be at
+                    least 1 minute in the future)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">from</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Sender ID or phone number (optional)
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-lg flex gap-3 mt-6">
+              <AlertTriangle className="w-5 h-5 text-yellow-500 shrink-0" />
+              <div>
+                <p className="font-semibold text-yellow-500 text-sm">
+                  Credits Reserved
+                </p>
+                <p className="text-sm text-yellow-500/80 mt-1">
+                  Credits are reserved when you schedule a message. If the
+                  message fails or is cancelled, credits are refunded to your
+                  account.
+                </p>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `import Sendly from '@sendly/sdk';
+
+const sendly = new Sendly('sk_test_v1_...');
+
+// Schedule a message for tomorrow at 9 AM
+const scheduled = await sendly.messages.schedule({
+  to: '+15551234567',
+  text: 'Reminder: Your appointment is in 1 hour!',
+  scheduledAt: '2025-01-20T09:00:00Z',
+  from: 'SENDLY'
+});
+
+console.log('Scheduled:', scheduled.id);
+console.log('Will send at:', scheduled.scheduledAt);`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `from sendly import Sendly
+
+sendly = Sendly("sk_test_v1_...")
+
+# Schedule a message for tomorrow at 9 AM
+scheduled = sendly.messages.schedule(
+    to="+15551234567",
+    text="Reminder: Your appointment is in 1 hour!",
+    scheduled_at="2025-01-20T09:00:00Z",
+    sender="SENDLY"
+)
+
+print(f"Scheduled: {scheduled.id}")
+print(f"Will send at: {scheduled.scheduled_at}")`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `package main
+
+import (
+    "fmt"
+    "github.com/sendly/sendly-go"
+)
+
+func main() {
+    client := sendly.New("sk_test_v1_...")
+
+    // Schedule a message for tomorrow at 9 AM
+    scheduled, err := client.Messages.Schedule(&sendly.ScheduleMessageRequest{
+        To:          "+15551234567",
+        Text:        "Reminder: Your appointment is in 1 hour!",
+        ScheduledAt: "2025-01-20T09:00:00Z",
+        From:        "SENDLY",
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("Scheduled: %s\\n", scheduled.ID)
+    fmt.Printf("Will send at: %s\\n", scheduled.ScheduledAt)
+}`,
+          },
+          {
+            title: "CLI",
+            language: "bash",
+            code: `# Schedule a message for a specific time
+sendly sms schedule --to +15551234567 \\
+  --text "Reminder: Your appointment is in 1 hour!" \\
+  --at "2025-01-20T09:00:00Z" \\
+  --from SENDLY
+
+# Output:
+# ✓ Message scheduled
+#   ID:           msg_abc123
+#   Scheduled At: 2025-01-20T09:00:00Z
+#   Status:       scheduled`,
+          },
+        ],
+      },
+      {
+        id: "list-scheduled",
+        title: "List Scheduled Messages",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Retrieve a list of all scheduled messages that haven't been sent
+              yet.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-blue-500/10 text-blue-500 border-blue-500/20 font-bold"
+              >
+                GET
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/messages/scheduled
+              </code>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `// List all scheduled messages
+const scheduled = await sendly.messages.listScheduled();
+
+for (const msg of scheduled.data) {
+  console.log(\`\${msg.id}: scheduled for \${msg.scheduledAt}\`);
+}`,
+          },
+          {
+            title: "CLI",
+            language: "bash",
+            code: `# List all scheduled messages
+sendly sms scheduled
+
+# With JSON output
+sendly sms scheduled --json`,
+          },
+        ],
+      },
+      {
+        id: "cancel-scheduled",
+        title: "Cancel Scheduled Message",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Cancel a scheduled message before it's sent. Credits will be
+              refunded to your account.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-red-500/10 text-red-500 border-red-500/20 font-bold"
+              >
+                DELETE
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/messages/scheduled/:id
+              </code>
+            </div>
+
+            <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-lg flex gap-3 mt-6">
+              <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
+              <div>
+                <p className="font-semibold text-green-500 text-sm">
+                  Automatic Refund
+                </p>
+                <p className="text-sm text-green-500/80 mt-1">
+                  When you cancel a scheduled message, reserved credits are
+                  automatically refunded to your account balance.
+                </p>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `// Cancel a scheduled message
+const cancelled = await sendly.messages.cancelScheduled('msg_abc123');
+
+console.log('Cancelled:', cancelled.id);
+console.log('Credits refunded:', cancelled.creditsRefunded);`,
+          },
+          {
+            title: "CLI",
+            language: "bash",
+            code: `# Cancel a scheduled message
+sendly sms cancel msg_abc123
+
+# Output:
+# ✓ Message cancelled
+#   ID:              msg_abc123
+#   Credits Refunded: 1`,
+          },
+        ],
+      },
+    ],
+  },
+
+  "/docs/messages/batch": {
+    title: "Batch Messages",
+    subtitle: "Send SMS messages to multiple recipients in a single API call.",
+    updatedAt: "Dec 16, 2025",
+    sections: [
+      {
+        id: "send-batch",
+        title: "Send Batch Messages",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Send the same or different messages to multiple recipients
+              efficiently. Batch sending is ideal for notifications, alerts, and
+              marketing campaigns.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-green-500/10 text-green-500 border-green-500/20 font-bold"
+              >
+                POST
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/messages/batch
+              </code>
+            </div>
+
+            <h3 className="font-semibold text-foreground mt-8 mb-4 text-lg">
+              Request Body
+            </h3>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Parameter</div>
+                <div className="col-span-2">Type</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    messages
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    array
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Array of message objects with `to` and `text` fields
+                    (required, max 1000)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">from</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Default sender ID for all messages (optional)
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h3 className="font-semibold text-foreground mt-8 mb-4 text-lg">
+              Response
+            </h3>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Field</div>
+                <div className="col-span-2">Type</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    batchId
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Unique identifier for tracking the batch
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">total</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    number
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Total number of messages in the batch
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    queued
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    number
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Number of messages successfully queued
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    failed
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    number
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Number of messages that failed validation
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    creditsUsed
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    number
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Total credits used for successfully queued messages
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `import Sendly from '@sendly/sdk';
+
+const sendly = new Sendly('sk_test_v1_...');
+
+// Send batch messages
+const batch = await sendly.messages.sendBatch({
+  messages: [
+    { to: '+15551234567', text: 'Hello Alice!' },
+    { to: '+15559876543', text: 'Hello Bob!' },
+    { to: '+15555555555', text: 'Hello Charlie!' },
+  ],
+  from: 'SENDLY'
+});
+
+console.log(\`Batch ID: \${batch.batchId}\`);
+console.log(\`Queued: \${batch.queued}/\${batch.total}\`);
+console.log(\`Credits used: \${batch.creditsUsed}\`);`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `from sendly import Sendly
+
+sendly = Sendly("sk_test_v1_...")
+
+# Send batch messages
+batch = sendly.messages.send_batch(
+    messages=[
+        {"to": "+15551234567", "text": "Hello Alice!"},
+        {"to": "+15559876543", "text": "Hello Bob!"},
+        {"to": "+15555555555", "text": "Hello Charlie!"},
+    ],
+    sender="SENDLY"
+)
+
+print(f"Batch ID: {batch.batch_id}")
+print(f"Queued: {batch.queued}/{batch.total}")
+print(f"Credits used: {batch.credits_used}")`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `package main
+
+import (
+    "fmt"
+    "github.com/sendly/sendly-go"
+)
+
+func main() {
+    client := sendly.New("sk_test_v1_...")
+
+    batch, err := client.Messages.SendBatch(&sendly.BatchMessageRequest{
+        Messages: []sendly.BatchMessage{
+            {To: "+15551234567", Text: "Hello Alice!"},
+            {To: "+15559876543", Text: "Hello Bob!"},
+            {To: "+15555555555", Text: "Hello Charlie!"},
+        },
+        From: "SENDLY",
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("Batch ID: %s\\n", batch.BatchID)
+    fmt.Printf("Queued: %d/%d\\n", batch.Queued, batch.Total)
+    fmt.Printf("Credits used: %d\\n", batch.CreditsUsed)
+}`,
+          },
+          {
+            title: "CLI (from file)",
+            language: "bash",
+            code: `# Create a JSON file with recipients
+cat > recipients.json << 'EOF'
+[
+  { "to": "+15551234567", "text": "Hello Alice!" },
+  { "to": "+15559876543", "text": "Hello Bob!" },
+  { "to": "+15555555555", "text": "Hello Charlie!" }
+]
+EOF
+
+# Send batch from file
+sendly sms batch --file recipients.json --from SENDLY
+
+# Output:
+# ✓ Batch sent
+#   Batch ID:     batch_xyz789
+#   Total:        3
+#   Queued:       3
+#   Failed:       0
+#   Credits Used: 3`,
+          },
+          {
+            title: "CLI (inline)",
+            language: "bash",
+            code: `# Send same message to multiple recipients
+sendly sms batch \\
+  --to "+15551234567,+15559876543,+15555555555" \\
+  --text "Hello everyone!" \\
+  --from SENDLY`,
+          },
+        ],
+      },
+      {
+        id: "get-batch",
+        title: "Get Batch Status",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Check the status of a batch and see individual message delivery
+              results.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-blue-500/10 text-blue-500 border-blue-500/20 font-bold"
+              >
+                GET
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/messages/batch/:batchId
+              </code>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `// Get batch status
+const status = await sendly.messages.getBatch('batch_xyz789');
+
+console.log(\`Status: \${status.status}\`);
+console.log(\`Delivered: \${status.delivered}/\${status.total}\`);
+
+// Check individual message statuses
+for (const msg of status.messages) {
+  console.log(\`\${msg.to}: \${msg.status}\`);
+}`,
+          },
+        ],
+      },
+      {
+        id: "list-batches",
+        title: "List Batches",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Retrieve a list of all batches you've sent.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-blue-500/10 text-blue-500 border-blue-500/20 font-bold"
+              >
+                GET
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/messages/batches
+              </code>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `// List all batches
+const batches = await sendly.messages.listBatches();
+
+for (const batch of batches.data) {
+  console.log(\`\${batch.batchId}: \${batch.total} messages\`);
+}`,
+          },
+        ],
+      },
+    ],
+  },
+
+  // ============================================
+  // CLI
+  // ============================================
+  "/docs/cli": {
+    title: "CLI Reference",
+    subtitle: "Sendly command-line interface for developers.",
+    updatedAt: "Dec 16, 2025",
+    sections: [
+      {
+        id: "installation",
+        title: "Installation",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Install the Sendly CLI globally using npm, yarn, or pnpm.
+            </p>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="p-4 border border-border rounded-lg bg-card">
+                <div className="font-bold mb-2 text-foreground">npm</div>
+                <code className="text-xs bg-secondary p-2 rounded block">
+                  npm install -g @sendly/cli
+                </code>
+              </div>
+              <div className="p-4 border border-border rounded-lg bg-card">
+                <div className="font-bold mb-2 text-foreground">yarn</div>
+                <code className="text-xs bg-secondary p-2 rounded block">
+                  yarn global add @sendly/cli
+                </code>
+              </div>
+              <div className="p-4 border border-border rounded-lg bg-card">
+                <div className="font-bold mb-2 text-foreground">pnpm</div>
+                <code className="text-xs bg-secondary p-2 rounded block">
+                  pnpm add -g @sendly/cli
+                </code>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Verify Installation",
+            language: "bash",
+            code: `sendly --version
+# sendly/1.0.0 darwin-arm64 node-v20.0.0`,
+          },
+        ],
+      },
+      {
+        id: "authentication",
+        title: "Authentication",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Authenticate with your Sendly API key before using the CLI.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Login with API Key",
+            language: "bash",
+            code: `# Interactive login
+sendly login
+
+# Login with API key directly
+sendly login --api-key sk_test_v1_...
+
+# Check authentication status
+sendly whoami
+
+# Logout
+sendly logout`,
+          },
+        ],
+      },
+      {
+        id: "sms-send",
+        title: "Send SMS",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Send an SMS message from the command line.
+            </p>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Flag</div>
+                <div className="col-span-2">Short</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">--to</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -t
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Destination phone number in E.164 format (required)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    --text
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -m
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Message content (required)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    --from
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -f
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Sender ID (optional)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    --json
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Output in JSON format
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Send SMS",
+            language: "bash",
+            code: `# Send a message
+sendly sms send --to +15551234567 --text "Hello from CLI!"
+
+# With sender ID
+sendly sms send --to +15551234567 --text "Hello!" --from SENDLY
+
+# JSON output for scripting
+sendly sms send --to +15551234567 --text "Hello!" --json`,
+          },
+        ],
+      },
+      {
+        id: "sms-schedule",
+        title: "Schedule SMS",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Schedule messages to be sent at a specific time in the future.
+            </p>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Flag</div>
+                <div className="col-span-2">Short</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">--to</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -t
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Destination phone number (required)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    --text
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -m
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Message content (required)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">--at</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -a
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    ISO 8601 timestamp for delivery (required)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    --from
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -f
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Sender ID (optional)
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Schedule a Message",
+            language: "bash",
+            code: `# Schedule for a specific time
+sendly sms schedule \\
+  --to +15551234567 \\
+  --text "Reminder: Meeting in 1 hour" \\
+  --at "2025-01-20T09:00:00Z"
+
+# List scheduled messages
+sendly sms scheduled
+
+# Cancel a scheduled message
+sendly sms cancel msg_abc123`,
+          },
+        ],
+      },
+      {
+        id: "sms-batch",
+        title: "Batch SMS",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Send messages to multiple recipients at once using a file or
+              inline list.
+            </p>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Flag</div>
+                <div className="col-span-2">Short</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    --file
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -F
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    JSON or CSV file with recipients
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">--to</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -t
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Comma-separated phone numbers
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    --text
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -m
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Message for all recipients (with --to)
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    --from
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    -f
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Default sender ID
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Batch from File",
+            language: "bash",
+            code: `# JSON file format
+cat > recipients.json << 'EOF'
+[
+  { "to": "+15551234567", "text": "Hello Alice!" },
+  { "to": "+15559876543", "text": "Hello Bob!" }
+]
+EOF
+
+# Send batch
+sendly sms batch --file recipients.json --from SENDLY`,
+          },
+          {
+            title: "Batch Inline",
+            language: "bash",
+            code: `# Send same message to multiple recipients
+sendly sms batch \\
+  --to "+15551234567,+15559876543,+15555555555" \\
+  --text "Hello everyone!" \\
+  --from SENDLY`,
+          },
+          {
+            title: "CSV File Format",
+            language: "bash",
+            code: `# CSV file format
+cat > recipients.csv << 'EOF'
+to,text
++15551234567,Hello Alice!
++15559876543,Hello Bob!
+EOF
+
+# Send batch from CSV
+sendly sms batch --file recipients.csv`,
+          },
+        ],
+      },
+      {
+        id: "output-modes",
+        title: "Output Modes",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              The CLI supports multiple output modes for different use cases.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 border border-border rounded-lg bg-card">
+                <div className="font-bold mb-2 text-foreground flex items-center gap-2">
+                  <Terminal className="w-4 h-4 text-primary" />
+                  Human Mode (default)
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Colored, formatted output for interactive use in terminals.
+                </p>
+              </div>
+              <div className="p-4 border border-border rounded-lg bg-card">
+                <div className="font-bold mb-2 text-foreground flex items-center gap-2">
+                  <Code2 className="w-4 h-4 text-primary" />
+                  JSON Mode (--json)
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Machine-readable JSON output for scripting and automation.
+                </p>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Output Examples",
+            language: "bash",
+            code: `# Human-readable output (default)
+sendly sms send --to +15551234567 --text "Hello!"
+# ✓ Message sent
+#   ID:       msg_abc123
+#   Status:   queued
+#   Credits:  1
+
+# JSON output for scripting
+sendly sms send --to +15551234567 --text "Hello!" --json
+# {"id":"msg_abc123","status":"queued","creditsUsed":1}
+
+# Use with jq for processing
+sendly sms send --to +15551234567 --text "Hello!" --json | jq '.id'`,
+          },
+        ],
+      },
+    ],
+  },
+
   // ============================================
   // SDKs
   // ============================================
@@ -2696,7 +3670,8 @@ async function processEvent(event) {
   // ============================================
   "/docs/webhooks": {
     title: "Webhooks",
-    subtitle: "Receive real-time notifications when SMS events occur in your application",
+    subtitle:
+      "Receive real-time notifications when SMS events occur in your application",
     updatedAt: "Dec 14, 2025",
     sections: [
       {
@@ -2705,8 +3680,10 @@ async function processEvent(event) {
         content: (
           <div className="space-y-6">
             <p className="text-xl text-muted-foreground leading-relaxed">
-              Webhooks allow your application to receive real-time notifications when SMS events occur. 
-              Instead of polling our API for status updates, we'll send HTTP POST requests to your specified endpoints.
+              Webhooks allow your application to receive real-time notifications
+              when SMS events occur. Instead of polling our API for status
+              updates, we'll send HTTP POST requests to your specified
+              endpoints.
             </p>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="p-6 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors">
@@ -2715,7 +3692,8 @@ async function processEvent(event) {
                   Real-time Updates
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Get instant notifications when messages are sent, delivered, failed, or bounced.
+                  Get instant notifications when messages are sent, delivered,
+                  failed, or bounced.
                 </p>
               </div>
               <div className="p-6 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors">
@@ -2724,7 +3702,8 @@ async function processEvent(event) {
                   Secure Delivery
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  HMAC signatures ensure webhook authenticity and prevent tampering.
+                  HMAC signatures ensure webhook authenticity and prevent
+                  tampering.
                 </p>
               </div>
             </div>
@@ -2736,34 +3715,57 @@ async function processEvent(event) {
         title: "Getting Started",
         content: (
           <div className="space-y-6">
-            <p>Setting up webhooks is straightforward. Follow these steps to receive your first webhook:</p>
+            <p>
+              Setting up webhooks is straightforward. Follow these steps to
+              receive your first webhook:
+            </p>
             <div className="space-y-4">
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-6 h-6 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">1</div>
+                <div className="flex-shrink-0 w-6 h-6 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">
+                  1
+                </div>
                 <div>
                   <h4 className="font-semibold mb-1">Create an endpoint</h4>
-                  <p className="text-sm text-muted-foreground">Set up an HTTPS endpoint in your application to receive webhook events.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Set up an HTTPS endpoint in your application to receive
+                    webhook events.
+                  </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-6 h-6 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">2</div>
+                <div className="flex-shrink-0 w-6 h-6 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">
+                  2
+                </div>
                 <div>
                   <h4 className="font-semibold mb-1">Configure webhook</h4>
-                  <p className="text-sm text-muted-foreground">Add your webhook URL and select which events you want to receive.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Add your webhook URL and select which events you want to
+                    receive.
+                  </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-6 h-6 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">3</div>
+                <div className="flex-shrink-0 w-6 h-6 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">
+                  3
+                </div>
                 <div>
                   <h4 className="font-semibold mb-1">Verify signatures</h4>
-                  <p className="text-sm text-muted-foreground">Implement signature verification to ensure webhook authenticity.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Implement signature verification to ensure webhook
+                    authenticity.
+                  </p>
                 </div>
               </div>
               <div className="flex gap-4">
-                <div className="flex-shrink-0 w-6 h-6 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">4</div>
+                <div className="flex-shrink-0 w-6 h-6 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center text-xs font-bold text-primary">
+                  4
+                </div>
                 <div>
                   <h4 className="font-semibold mb-1">Test delivery</h4>
-                  <p className="text-sm text-muted-foreground">Use the test feature to verify your webhook is working correctly.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Use the test feature to verify your webhook is working
+                    correctly.
+                  </p>
                 </div>
               </div>
             </div>
@@ -2775,38 +3777,56 @@ async function processEvent(event) {
         title: "Event Types",
         content: (
           <div className="space-y-6">
-            <p>Sendly supports four main event types that cover the SMS lifecycle:</p>
+            <p>
+              Sendly supports four main event types that cover the SMS
+              lifecycle:
+            </p>
             <div className="space-y-4">
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline" className="font-mono">message.sent</Badge>
+                  <Badge variant="outline" className="font-mono">
+                    message.sent
+                  </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Fired when a message is successfully sent to the carrier. This means the message has left our system and is on its way to the recipient.
+                  Fired when a message is successfully sent to the carrier. This
+                  means the message has left our system and is on its way to the
+                  recipient.
                 </p>
               </div>
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline" className="font-mono">message.delivered</Badge>
+                  <Badge variant="outline" className="font-mono">
+                    message.delivered
+                  </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Fired when a message is successfully delivered to the recipient's device. This is the final confirmation that the message reached its destination.
+                  Fired when a message is successfully delivered to the
+                  recipient's device. This is the final confirmation that the
+                  message reached its destination.
                 </p>
               </div>
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline" className="font-mono">message.failed</Badge>
+                  <Badge variant="outline" className="font-mono">
+                    message.failed
+                  </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Fired when a message fails to be delivered. This includes carrier rejections, invalid numbers, and other delivery failures.
+                  Fired when a message fails to be delivered. This includes
+                  carrier rejections, invalid numbers, and other delivery
+                  failures.
                 </p>
               </div>
               <div className="border border-border rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline" className="font-mono">message.bounced</Badge>
+                  <Badge variant="outline" className="font-mono">
+                    message.bounced
+                  </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Fired when a message bounces due to invalid destination numbers or carrier-level rejections before delivery attempts.
+                  Fired when a message bounces due to invalid destination
+                  numbers or carrier-level rejections before delivery attempts.
                 </p>
               </div>
             </div>
@@ -2831,9 +3851,10 @@ async function processEvent(event) {
   "timestamp": "2024-01-15T10:31:30Z",
   "apiVersion": "v1"
 }`,
-            description: "All webhook payloads follow this structure with event-specific data"
-          }
-        ]
+            description:
+              "All webhook payloads follow this structure with event-specific data",
+          },
+        ],
       },
       {
         id: "signatures",
@@ -2841,17 +3862,24 @@ async function processEvent(event) {
         content: (
           <div className="space-y-6">
             <p>
-              Every webhook request includes an <code className="bg-muted px-1 py-0.5 rounded text-xs">X-Sendly-Signature</code> header 
-              containing an HMAC SHA-256 signature of the request body using your webhook secret.
+              Every webhook request includes an{" "}
+              <code className="bg-muted px-1 py-0.5 rounded text-xs">
+                X-Sendly-Signature
+              </code>{" "}
+              header containing an HMAC SHA-256 signature of the request body
+              using your webhook secret.
             </p>
             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-yellow-500 mb-1">Security Important</p>
+                  <p className="font-semibold text-yellow-500 mb-1">
+                    Security Important
+                  </p>
                   <p className="text-sm text-yellow-200/80">
-                    Always verify webhook signatures in production to ensure requests are actually from Sendly.
-                    Failing to do so could allow attackers to spoof webhooks to your application.
+                    Always verify webhook signatures in production to ensure
+                    requests are actually from Sendly. Failing to do so could
+                    allow attackers to spoof webhooks to your application.
                   </p>
                 </div>
               </div>
@@ -2871,38 +3899,39 @@ app.use('/webhooks/sendly', express.raw({type: 'application/json'}));
 app.post('/webhooks/sendly', (req, res) => {
   const signature = req.headers['x-sendly-signature'];
   const secret = process.env.SENDLY_WEBHOOK_SECRET;
-  
+
   // Verify timestamp to prevent replay attacks
   const timestamp = req.headers['x-sendly-timestamp'];
   const now = Math.floor(Date.now() / 1000);
   if (Math.abs(now - timestamp) > 300) { // 5 minute tolerance
     return res.status(400).send('Timestamp too old');
   }
-  
+
   // Create expected signature
   const payload = timestamp + '.' + req.body;
   const expectedSignature = crypto
     .createHmac('sha256', secret)
     .update(payload, 'utf8')
     .digest('hex');
-  
+
   // Compare signatures
   const receivedSignature = signature.replace('sha256=', '');
-  
+
   if (!crypto.timingSafeEqual(
     Buffer.from(expectedSignature, 'hex'),
     Buffer.from(receivedSignature, 'hex')
   )) {
     return res.status(401).send('Invalid signature');
   }
-  
+
   // Process the webhook
   const event = JSON.parse(req.body);
   console.log('Received event:', event.event);
-  
+
   res.status(200).send('OK');
 });`,
-            description: "Always use timing-safe comparison and verify timestamps"
+            description:
+              "Always use timing-safe comparison and verify timestamps",
           },
           {
             title: "Python Signature Verification",
@@ -2919,12 +3948,12 @@ def handle_webhook():
     signature = request.headers.get('X-Sendly-Signature')
     timestamp = request.headers.get('X-Sendly-Timestamp')
     secret = os.environ['SENDLY_WEBHOOK_SECRET']
-    
+
     # Verify timestamp
     now = int(time.time())
     if abs(now - int(timestamp)) > 300:  # 5 minute tolerance
         abort(400, 'Timestamp too old')
-    
+
     # Create expected signature
     payload = f"{timestamp}.{request.get_data(as_text=True)}"
     expected_signature = hmac.new(
@@ -2932,19 +3961,20 @@ def handle_webhook():
         payload.encode('utf-8'),
         hashlib.sha256
     ).hexdigest()
-    
+
     # Compare signatures
     received_signature = signature.replace('sha256=', '')
-    
+
     if not hmac.compare_digest(expected_signature, received_signature):
         abort(401, 'Invalid signature')
-    
+
     # Process the webhook
     event = request.get_json()
     print(f"Received event: {event['event']}")
-    
+
     return 'OK', 200`,
-            description: "Use hmac.compare_digest() for constant-time comparison"
+            description:
+              "Use hmac.compare_digest() for constant-time comparison",
           },
           {
             title: "Go Signature Verification",
@@ -2977,54 +4007,55 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
     signature := r.Header.Get("X-Sendly-Signature")
     timestamp := r.Header.Get("X-Sendly-Timestamp")
     secret := os.Getenv("SENDLY_WEBHOOK_SECRET")
-    
+
     // Verify timestamp
     ts, err := strconv.ParseInt(timestamp, 10, 64)
     if err != nil {
         http.Error(w, "Invalid timestamp", http.StatusBadRequest)
         return
     }
-    
+
     now := time.Now().Unix()
     if math.Abs(float64(now-ts)) > 300 { // 5 minute tolerance
         http.Error(w, "Timestamp too old", http.StatusBadRequest)
         return
     }
-    
+
     // Read body
     body, err := ioutil.ReadAll(r.Body)
     if err != nil {
         http.Error(w, "Cannot read body", http.StatusBadRequest)
         return
     }
-    
+
     // Create expected signature
     payload := fmt.Sprintf("%s.%s", timestamp, string(body))
     mac := hmac.New(sha256.New, []byte(secret))
     mac.Write([]byte(payload))
     expectedSignature := hex.EncodeToString(mac.Sum(nil))
-    
+
     // Compare signatures
     receivedSignature := strings.Replace(signature, "sha256=", "", 1)
-    
+
     if subtle.ConstantTimeCompare([]byte(expectedSignature), []byte(receivedSignature)) != 1 {
         http.Error(w, "Invalid signature", http.StatusUnauthorized)
         return
     }
-    
+
     // Process webhook
     var event WebhookEvent
     if err := json.Unmarshal(body, &event); err != nil {
         http.Error(w, "Invalid JSON", http.StatusBadRequest)
         return
     }
-    
+
     fmt.Printf("Received event: %s\\n", event.Event)
     w.WriteHeader(http.StatusOK)
 }`,
-            description: "Use subtle.ConstantTimeCompare for secure signature verification"
-          }
-        ]
+            description:
+              "Use subtle.ConstantTimeCompare for secure signature verification",
+          },
+        ],
       },
       {
         id: "best-practices",
@@ -3038,11 +4069,20 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
                   Security
                 </h4>
                 <ul className="space-y-2 text-sm text-muted-foreground ml-6">
-                  <li>• Always use HTTPS endpoints - we reject HTTP webhooks</li>
-                  <li>• Verify signatures on every request to prevent spoofing</li>
-                  <li>• Implement timestamp validation to prevent replay attacks</li>
+                  <li>
+                    • Always use HTTPS endpoints - we reject HTTP webhooks
+                  </li>
+                  <li>
+                    • Verify signatures on every request to prevent spoofing
+                  </li>
+                  <li>
+                    • Implement timestamp validation to prevent replay attacks
+                  </li>
                   <li>• Consider IP allowlisting for additional security</li>
-                  <li>• Use a dedicated webhook secret that's different from your API key</li>
+                  <li>
+                    • Use a dedicated webhook secret that's different from your
+                    API key
+                  </li>
                 </ul>
               </div>
               <div>
@@ -3052,9 +4092,14 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
                 </h4>
                 <ul className="space-y-2 text-sm text-muted-foreground ml-6">
                   <li>• Respond with 2xx status codes within 10 seconds</li>
-                  <li>• Implement idempotency - handle duplicate events gracefully</li>
+                  <li>
+                    • Implement idempotency - handle duplicate events gracefully
+                  </li>
                   <li>• Use proper error handling and logging</li>
-                  <li>• Consider implementing a dead letter queue for failed processing</li>
+                  <li>
+                    • Consider implementing a dead letter queue for failed
+                    processing
+                  </li>
                   <li>• Monitor your webhook endpoints for availability</li>
                 </ul>
               </div>
@@ -3066,7 +4111,9 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
                 <ul className="space-y-2 text-sm text-muted-foreground ml-6">
                   <li>• Keep webhook processing lightweight and fast</li>
                   <li>• Use background job queues for heavy processing</li>
-                  <li>• Avoid synchronous database writes in webhook handlers</li>
+                  <li>
+                    • Avoid synchronous database writes in webhook handlers
+                  </li>
                   <li>• Consider rate limiting your webhook endpoints</li>
                   <li>• Monitor response times and optimize bottlenecks</li>
                 </ul>
@@ -3083,29 +4130,41 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
             <p>Common issues and solutions when working with webhooks:</p>
             <div className="space-y-6">
               <div className="border border-red-500/20 bg-red-500/5 rounded-lg p-4">
-                <h4 className="font-semibold text-red-400 mb-2">Webhooks Not Received</h4>
+                <h4 className="font-semibold text-red-400 mb-2">
+                  Webhooks Not Received
+                </h4>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li>• Check that your endpoint returns 2xx status codes</li>
-                  <li>• Verify your endpoint is accessible from the internet</li>
+                  <li>
+                    • Verify your endpoint is accessible from the internet
+                  </li>
                   <li>• Ensure you're using HTTPS, not HTTP</li>
                   <li>• Check your firewall and security group settings</li>
                 </ul>
               </div>
-              
+
               <div className="border border-yellow-500/20 bg-yellow-500/5 rounded-lg p-4">
-                <h4 className="font-semibold text-yellow-500 mb-2">Signature Verification Failing</h4>
+                <h4 className="font-semibold text-yellow-500 mb-2">
+                  Signature Verification Failing
+                </h4>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li>• Ensure you're using the correct webhook secret</li>
-                  <li>• Verify timestamp format and replay attack protection</li>
+                  <li>
+                    • Verify timestamp format and replay attack protection
+                  </li>
                   <li>• Check that you're reading the raw request body</li>
                   <li>• Make sure character encoding is consistent (UTF-8)</li>
                 </ul>
               </div>
-              
+
               <div className="border border-blue-500/20 bg-blue-500/5 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-400 mb-2">High Retry Attempts</h4>
+                <h4 className="font-semibold text-blue-400 mb-2">
+                  High Retry Attempts
+                </h4>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>• Check your endpoint response times (should be < 10s)</li>
+                  <li>
+                    • Check your endpoint response times (should be under 10s)
+                  </li>
                   <li>• Verify you're returning proper HTTP status codes</li>
                   <li>• Monitor your application logs for errors</li>
                   <li>• Consider implementing circuit breakers if needed</li>
@@ -3114,7 +4173,7 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
             </div>
           </div>
         ),
-      }
+      },
     ],
   },
 };

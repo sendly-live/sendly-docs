@@ -112,11 +112,11 @@ export const docsContent: Record<string, DocPage> = {
             filename: "terminal",
             language: "bash",
             code: `# Install the SDK
-npm install @sendly/sdk
+npm install @sendly/node
 
 # Send your first message
-curl -X POST https://api.sendly.dev/v1/messages \\
-  -H "Authorization: Bearer sk_test_v1_..." \\
+curl -X POST https://sendly.live/api/v1/messages \\
+  -H "Authorization: Bearer sk_test_..." \\
   -H "Content-Type: application/json" \\
   -d '{"to": "+15551234567", "text": "Hello from Sendly!"}'`,
             description: "Get started in under a minute.",
@@ -134,7 +134,7 @@ curl -X POST https://api.sendly.dev/v1/messages \\
             </p>
             <div className="flex items-center gap-2 bg-secondary/50 p-4 rounded-md border border-border font-mono text-sm">
               <Globe className="w-4 h-4 text-muted-foreground" />
-              <span className="text-primary">https://api.sendly.dev/v1</span>
+              <span className="text-primary">https://sendly.live/api/v1</span>
             </div>
             <p className="text-sm text-muted-foreground">
               The API supports HTTPS only. All requests must be encrypted.
@@ -145,7 +145,7 @@ curl -X POST https://api.sendly.dev/v1/messages \\
           {
             title: "Health Check",
             language: "bash",
-            code: "curl https://api.sendly.dev/v1/health",
+            code: "curl https://sendly.live/api/v1/health",
             description: "Verify connectivity to our API.",
           },
         ],
@@ -195,8 +195,8 @@ curl -X POST https://api.sendly.dev/v1/messages \\
           <div className="space-y-4">
             <p className="text-muted-foreground">
               After signing up, you'll receive a test API key that starts with{" "}
-              <code className="bg-secondary px-1 rounded">sk_test_v1_</code>.
-              This key works in sandbox mode without requiring credits.
+              <code className="bg-secondary px-1 rounded">sk_test_</code>. This
+              key works in sandbox mode without requiring credits.
             </p>
             <div className="border border-border rounded-lg overflow-hidden">
               <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
@@ -209,7 +209,7 @@ curl -X POST https://api.sendly.dev/v1/messages \\
                   <div className="col-span-3 text-primary font-semibold">
                     Test
                   </div>
-                  <div className="col-span-3 font-mono">sk_test_v1_*</div>
+                  <div className="col-span-3 font-mono">sk_test_*</div>
                   <div className="col-span-6 text-muted-foreground">
                     Development, sandbox testing
                   </div>
@@ -242,7 +242,7 @@ curl -X POST https://api.sendly.dev/v1/messages \\
           {
             title: "Node.js",
             language: "bash",
-            code: "npm install @sendly/sdk",
+            code: "npm install @sendly/node",
           },
           {
             title: "Python",
@@ -299,9 +299,9 @@ curl -X POST https://api.sendly.dev/v1/messages \\
           {
             title: "Node.js Example",
             language: "typescript",
-            code: `import { Sendly } from '@sendly/sdk';
+            code: `import { Sendly } from '@sendly/node';
 
-const sendly = new Sendly('sk_test_v1_your_api_key');
+const sendly = new Sendly('sk_test_your_api_key');
 
 const message = await sendly.messages.send({
   to: '+15551234567',
@@ -316,7 +316,7 @@ console.log('Status:', message.status);`,
             language: "python",
             code: `from sendly import Sendly
 
-sendly = Sendly('sk_test_v1_your_api_key')
+sendly = Sendly('sk_test_your_api_key')
 
 message = sendly.messages.send(
     to='+15551234567',
@@ -370,7 +370,7 @@ print(f'Status: {message.status}')`,
           {
             title: "Using the SDK",
             language: "typescript",
-            code: `import { Sendly } from '@sendly/sdk';
+            code: `import { Sendly } from '@sendly/node';
 
 const sendly = new Sendly(process.env.SENDLY_API_KEY);`,
             description:
@@ -379,8 +379,8 @@ const sendly = new Sendly(process.env.SENDLY_API_KEY);`,
           {
             title: "Raw HTTP Request",
             language: "bash",
-            code: `curl -X POST https://api.sendly.dev/v1/messages \\
-  -H "Authorization: Bearer sk_test_v1_your_api_key" \\
+            code: `curl -X POST https://sendly.live/api/v1/messages \\
+  -H "Authorization: Bearer sk_test_your_api_key" \\
   -H "Content-Type: application/json" \\
   -d '{"to": "+15551234567", "text": "Hello!"}'`,
             description:
@@ -408,7 +408,7 @@ const sendly = new Sendly(process.env.SENDLY_API_KEY);`,
                   <div className="col-span-2 font-semibold text-primary">
                     Test
                   </div>
-                  <div className="col-span-3 font-mono">sk_test_v1_*</div>
+                  <div className="col-span-3 font-mono">sk_test_*</div>
                   <div className="col-span-3 text-muted-foreground">
                     Not required
                   </div>
@@ -844,9 +844,9 @@ console.log('Credits used:', message.creditsUsed);`,
           {
             title: "Node.js",
             language: "typescript",
-            code: `import { Sendly } from '@sendly/sdk';
+            code: `import { Sendly } from '@sendly/node';
 
-const sendly = new Sendly('sk_test_v1_...');
+const sendly = new Sendly('sk_test_...');
 
 const message = await sendly.messages.send({
   to: '+15551234567',
@@ -861,7 +861,7 @@ console.log(message.status); // "queued"`,
             language: "python",
             code: `from sendly import Sendly
 
-sendly = Sendly('sk_test_v1_...')
+sendly = Sendly('sk_test_...')
 
 message = sendly.messages.send(
     to='+15551234567',
@@ -874,8 +874,8 @@ print(message.status)  # "queued"`,
           {
             title: "cURL",
             language: "bash",
-            code: `curl -X POST https://api.sendly.dev/v1/messages \\
-  -H "Authorization: Bearer sk_test_v1_..." \\
+            code: `curl -X POST https://sendly.live/api/v1/messages \\
+  -H "Authorization: Bearer sk_test_..." \\
   -H "Content-Type: application/json" \\
   -d '{
     "to": "+15551234567",
@@ -1034,7 +1034,7 @@ print(message.status)  # "queued"`,
   InsufficientCreditsError,
   RateLimitError,
   ValidationError
-} from '@sendly/sdk';
+} from '@sendly/node';
 
 try {
   const message = await sendly.messages.send({
@@ -1270,9 +1270,9 @@ console.log('Delivered at:', message.deliveredAt);`,
           {
             title: "Node.js",
             language: "typescript",
-            code: `import Sendly from '@sendly/sdk';
+            code: `import Sendly from '@sendly/node';
 
-const sendly = new Sendly('sk_test_v1_...');
+const sendly = new Sendly('sk_test_...');
 
 // Schedule a message for tomorrow at 9 AM
 const scheduled = await sendly.messages.schedule({
@@ -1290,7 +1290,7 @@ console.log('Will send at:', scheduled.scheduledAt);`,
             language: "python",
             code: `from sendly import Sendly
 
-sendly = Sendly("sk_test_v1_...")
+sendly = Sendly("sk_test_...")
 
 # Schedule a message for tomorrow at 9 AM
 scheduled = sendly.messages.schedule(
@@ -1314,7 +1314,7 @@ import (
 )
 
 func main() {
-    client := sendly.New("sk_test_v1_...")
+    client := sendly.New("sk_test_...")
 
     // Schedule a message for tomorrow at 9 AM
     scheduled, err := client.Messages.Schedule(&sendly.ScheduleMessageRequest{
@@ -1585,9 +1585,9 @@ sendly sms cancel msg_abc123
           {
             title: "Node.js",
             language: "typescript",
-            code: `import Sendly from '@sendly/sdk';
+            code: `import Sendly from '@sendly/node';
 
-const sendly = new Sendly('sk_test_v1_...');
+const sendly = new Sendly('sk_test_...');
 
 // Send batch messages
 const batch = await sendly.messages.sendBatch({
@@ -1608,7 +1608,7 @@ console.log(\`Credits used: \${batch.creditsUsed}\`);`,
             language: "python",
             code: `from sendly import Sendly
 
-sendly = Sendly("sk_test_v1_...")
+sendly = Sendly("sk_test_...")
 
 # Send batch messages
 batch = sendly.messages.send_batch(
@@ -1635,7 +1635,7 @@ import (
 )
 
 func main() {
-    client := sendly.New("sk_test_v1_...")
+    client := sendly.New("sk_test_...")
 
     batch, err := client.Messages.SendBatch(&sendly.BatchMessageRequest{
         Messages: []sendly.BatchMessage{
@@ -1829,7 +1829,7 @@ for (const batch of batches.data) {
 sendly login
 
 # Login with API key directly
-sendly login --api-key sk_test_v1_...
+sendly login --api-key sk_test_...
 
 # Check authentication status
 sendly whoami
@@ -2181,7 +2181,7 @@ sendly sms send --to +15551234567 --text "Hello!" --json | jq '.id'`,
                   Node.js
                 </div>
                 <code className="text-xs bg-secondary p-1 rounded block">
-                  npm install @sendly/sdk
+                  npm install @sendly/node
                 </code>
               </div>
               <div className="p-4 border border-border rounded-lg bg-card hover:border-[#3776ab]/50 transition-colors group">
@@ -2367,17 +2367,17 @@ sendly sms send --to +15551234567 --text "Hello!" --json | jq '.id'`,
           {
             title: "npm",
             language: "bash",
-            code: "npm install @sendly/sdk",
+            code: "npm install @sendly/node",
           },
           {
             title: "yarn",
             language: "bash",
-            code: "yarn add @sendly/sdk",
+            code: "yarn add @sendly/node",
           },
           {
             title: "pnpm",
             language: "bash",
-            code: "pnpm add @sendly/sdk",
+            code: "pnpm add @sendly/node",
           },
         ],
       },
@@ -2395,7 +2395,7 @@ sendly sms send --to +15551234567 --text "Hello!" --json | jq '.id'`,
           {
             title: "Send a Message",
             language: "typescript",
-            code: `import { Sendly } from '@sendly/sdk';
+            code: `import { Sendly } from '@sendly/node';
 
 // Initialize with your API key
 const sendly = new Sendly(process.env.SENDLY_API_KEY);
@@ -2426,9 +2426,9 @@ console.log('Segments:', message.segments);`,
           {
             title: "Configuration Options",
             language: "typescript",
-            code: `const sendly = new Sendly('sk_test_v1_...', {
+            code: `const sendly = new Sendly('sk_test_...', {
   // Custom base URL (for testing)
-  baseUrl: 'https://api.sendly.dev',
+  baseUrl: 'https://sendly.live/api/v1',
 
   // Request timeout in milliseconds (default: 30000)
   timeout: 60000,
@@ -2529,7 +2529,7 @@ console.log('Segments:', message.segments);`,
   RateLimitError,
   ValidationError,
   ServerError
-} from '@sendly/sdk';
+} from '@sendly/node';
 
 try {
   await sendly.messages.send({ to, text });
@@ -2609,7 +2609,7 @@ for await (const message of sendly.messages.listAll({ limit: 100 })) {
             title: "Express.js Example",
             language: "typescript",
             code: `import express from 'express';
-import { Webhooks } from '@sendly/sdk';
+import { Webhooks } from '@sendly/node';
 
 const app = express();
 
@@ -3410,7 +3410,7 @@ function verifySignature(payload: string, signature: string, secret: string): bo
             title: "Complete Example",
             language: "typescript",
             code: `import express from 'express';
-import { Webhooks } from '@sendly/sdk';
+import { Webhooks } from '@sendly/node';
 
 const app = express();
 

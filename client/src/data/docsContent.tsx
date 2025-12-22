@@ -18,6 +18,7 @@ import {
   AlertTriangle,
   Package,
   Webhook,
+  Info,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -260,7 +261,7 @@ curl -X POST https://sendly.live/api/v1/messages \\
             code: `<dependency>
   <groupId>com.sendly</groupId>
   <artifactId>sendly-java</artifactId>
-  <version>1.0.0</version>
+  <version>2.2.0</version>
 </dependency>`,
           },
         ],
@@ -1807,7 +1808,7 @@ for (const batch of batches.data) {
             title: "Verify Installation",
             language: "bash",
             code: `sendly --version
-# sendly/1.0.0 darwin-arm64 node-v20.0.0`,
+# sendly/2.2.0 darwin-arm64 node-v20.0.0`,
           },
         ],
       },
@@ -2351,7 +2352,7 @@ sendly sms send --to +15551234567 --text "Hello!" --json | jq '.id'`,
     title: "Node.js SDK",
     subtitle: "Official Sendly SDK for Node.js and TypeScript.",
     updatedAt: "Dec 13, 2025",
-    version: "1.0.0",
+    version: "2.2.0",
     sections: [
       {
         id: "installation",
@@ -2646,7 +2647,7 @@ app.post('/webhooks/sendly', express.raw({ type: 'application/json' }), (req, re
     title: "Python SDK",
     subtitle: "Official Sendly SDK for Python with async support.",
     updatedAt: "Dec 13, 2025",
-    version: "1.0.0",
+    version: "2.2.0",
     sections: [
       {
         id: "installation",
@@ -2823,7 +2824,7 @@ def handle_webhook():
     title: "Go SDK",
     subtitle: "Official Sendly SDK for Go.",
     updatedAt: "Dec 13, 2025",
-    version: "1.0.0",
+    version: "2.2.0",
     sections: [
       {
         id: "installation",
@@ -2923,7 +2924,7 @@ if err != nil {
     title: "Java SDK",
     subtitle: "Official Sendly SDK for Java.",
     updatedAt: "Dec 13, 2025",
-    version: "1.0.0",
+    version: "2.2.0",
     sections: [
       {
         id: "installation",
@@ -2942,13 +2943,13 @@ if err != nil {
             code: `<dependency>
     <groupId>com.sendly</groupId>
     <artifactId>sendly-java</artifactId>
-    <version>1.0.0</version>
+    <version>2.2.0</version>
 </dependency>`,
           },
           {
             title: "Gradle",
             language: "groovy",
-            code: `implementation 'com.sendly:sendly-java:1.0.0'`,
+            code: `implementation 'com.sendly:sendly-java:2.2.0'`,
           },
         ],
       },
@@ -2994,7 +2995,7 @@ public class Main {
     title: "Rust SDK",
     subtitle: "Official Sendly SDK for Rust.",
     updatedAt: "Dec 13, 2025",
-    version: "1.0.0",
+    version: "2.2.0",
     sections: [
       {
         id: "installation",
@@ -3061,7 +3062,7 @@ async fn main() -> Result<(), sendly::Error> {
     title: "PHP SDK",
     subtitle: "Official Sendly SDK for PHP.",
     updatedAt: "Dec 13, 2025",
-    version: "1.0.0",
+    version: "2.2.0",
     sections: [
       {
         id: "installation",
@@ -3119,7 +3120,7 @@ echo "Status: " . $message->status . "\\n";`,
     title: "Ruby SDK",
     subtitle: "Official Sendly SDK for Ruby.",
     updatedAt: "Dec 13, 2025",
-    version: "1.0.0",
+    version: "2.2.0",
     sections: [
       {
         id: "installation",
@@ -3179,7 +3180,7 @@ puts "Status: #{message.status}"`,
     title: "C# / .NET SDK",
     subtitle: "Official Sendly SDK for C# and .NET.",
     updatedAt: "Dec 13, 2025",
-    version: "1.0.0",
+    version: "2.2.0",
     sections: [
       {
         id: "installation",
@@ -4173,6 +4174,830 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
             </div>
           </div>
         ),
+      },
+    ],
+  },
+
+  // ============================================
+  // WEBHOOK MANAGEMENT API
+  // ============================================
+  "/docs/webhooks/api": {
+    title: "Webhook Management API",
+    subtitle:
+      "Create, manage, and test webhooks programmatically via the API or SDK.",
+    updatedAt: "Dec 22, 2025",
+    version: "v1",
+    sections: [
+      {
+        id: "overview",
+        title: "Overview",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground leading-relaxed">
+              The Webhook Management API allows you to programmatically create,
+              update, and manage webhooks. You can also test webhooks, view
+              delivery history, and rotate secrets—all via the API or SDK.
+            </p>
+            <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg flex gap-3">
+              <Zap className="w-5 h-5 text-blue-500 shrink-0" />
+              <div>
+                <p className="font-semibold text-blue-500 text-sm">
+                  SDK Support
+                </p>
+                <p className="text-sm text-blue-500/80 mt-1">
+                  All webhook management features are available via the{" "}
+                  <code className="bg-blue-500/20 px-1 rounded">
+                    sendly.webhooks
+                  </code>{" "}
+                  resource in all 8 SDKs.
+                </p>
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        id: "create-webhook",
+        title: "Create Webhook",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Create a new webhook endpoint to receive event notifications.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-green-500/10 text-green-500 border-green-500/20 font-bold"
+              >
+                POST
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks
+              </code>
+            </div>
+
+            <h3 className="font-semibold text-foreground mt-8 mb-4 text-lg">
+              Request Body
+            </h3>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Parameter</div>
+                <div className="col-span-2">Type</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">url</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    HTTPS URL to receive webhook events.
+                    <span className="ml-2 inline-block px-1.5 py-0.5 rounded border border-red-500/30 bg-red-500/10 text-red-500 text-[10px] uppercase font-bold">
+                      Required
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    events
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string[]
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Array of event types to subscribe to.
+                    <span className="ml-2 inline-block px-1.5 py-0.5 rounded border border-red-500/30 bg-red-500/10 text-red-500 text-[10px] uppercase font-bold">
+                      Required
+                    </span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    description
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Optional description for this webhook.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    metadata
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    object
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Optional key-value metadata.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-lg flex gap-3 mt-6">
+              <AlertTriangle className="w-5 h-5 text-yellow-500 shrink-0" />
+              <div>
+                <p className="font-semibold text-yellow-500 text-sm">
+                  Save Your Secret!
+                </p>
+                <p className="text-sm text-yellow-500/80 mt-1">
+                  The webhook secret is only returned once when the webhook is
+                  created. Store it securely—you cannot retrieve it later.
+                </p>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `import { Sendly } from '@sendly/node';
+
+const sendly = new Sendly('sk_test_...');
+
+const webhook = await sendly.webhooks.create({
+  url: 'https://your-app.com/webhooks/sendly',
+  events: ['message.sent', 'message.delivered', 'message.failed'],
+  description: 'Production webhook'
+});
+
+// IMPORTANT: Save this secret - it's only shown once!
+console.log('Webhook ID:', webhook.id);
+console.log('Secret:', webhook.secret);`,
+          },
+          {
+            title: "cURL",
+            language: "bash",
+            code: `curl -X POST https://sendly.live/api/v1/webhooks \\
+  -H "Authorization: Bearer sk_test_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "url": "https://your-app.com/webhooks/sendly",
+    "events": ["message.sent", "message.delivered", "message.failed"],
+    "description": "Production webhook"
+  }'`,
+          },
+          {
+            title: "Response",
+            language: "json",
+            code: `{
+  "id": "whk_abc123def456",
+  "url": "https://your-app.com/webhooks/sendly",
+  "events": ["message.sent", "message.delivered", "message.failed"],
+  "description": "Production webhook",
+  "is_active": true,
+  "failure_count": 0,
+  "circuit_state": "closed",
+  "api_version": "2024-01",
+  "secret": "whsec_abc123...",
+  "created_at": "2025-12-22T10:30:00Z",
+  "updated_at": "2025-12-22T10:30:00Z"
+}`,
+          },
+        ],
+      },
+      {
+        id: "list-webhooks",
+        title: "List Webhooks",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Retrieve all webhooks configured for your account.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-blue-500/10 text-blue-500 border-blue-500/20 font-bold"
+              >
+                GET
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks
+              </code>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `const webhooks = await sendly.webhooks.list();
+
+for (const webhook of webhooks) {
+  console.log(\`\${webhook.id}: \${webhook.url} (\${webhook.circuit_state})\`);
+}`,
+          },
+        ],
+      },
+      {
+        id: "get-webhook",
+        title: "Get Webhook",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Retrieve details of a specific webhook by ID.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-blue-500/10 text-blue-500 border-blue-500/20 font-bold"
+              >
+                GET
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks/:id
+              </code>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `const webhook = await sendly.webhooks.get('whk_abc123def456');
+
+console.log('URL:', webhook.url);
+console.log('Events:', webhook.events);
+console.log('Success Rate:', webhook.success_rate + '%');
+console.log('Total Deliveries:', webhook.total_deliveries);`,
+          },
+        ],
+      },
+      {
+        id: "update-webhook",
+        title: "Update Webhook",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Update a webhook's URL, events, or active status.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 font-bold"
+              >
+                PATCH
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks/:id
+              </code>
+            </div>
+
+            <h3 className="font-semibold text-foreground mt-8 mb-4 text-lg">
+              Request Body
+            </h3>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Parameter</div>
+                <div className="col-span-2">Type</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">url</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    New HTTPS URL for webhook delivery.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    events
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string[]
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Updated array of event types.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    is_active
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    boolean
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Enable or disable the webhook.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    description
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Updated description.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `// Update webhook URL
+const updated = await sendly.webhooks.update('whk_abc123def456', {
+  url: 'https://new-endpoint.com/webhook'
+});
+
+// Disable webhook temporarily
+await sendly.webhooks.update('whk_abc123def456', {
+  is_active: false
+});
+
+// Add more events
+await sendly.webhooks.update('whk_abc123def456', {
+  events: ['message.sent', 'message.delivered', 'message.failed', 'message.bounced']
+});`,
+          },
+        ],
+      },
+      {
+        id: "delete-webhook",
+        title: "Delete Webhook",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Permanently delete a webhook. This action cannot be undone.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-red-500/10 text-red-500 border-red-500/20 font-bold"
+              >
+                DELETE
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks/:id
+              </code>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `await sendly.webhooks.delete('whk_abc123def456');
+console.log('Webhook deleted');`,
+          },
+        ],
+      },
+      {
+        id: "test-webhook",
+        title: "Test Webhook",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Send a test event to verify your webhook endpoint is working
+              correctly.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-green-500/10 text-green-500 border-green-500/20 font-bold"
+              >
+                POST
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks/:id/test
+              </code>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `const result = await sendly.webhooks.test('whk_abc123def456');
+
+if (result.success) {
+  console.log('Test successful!');
+  console.log('Response time:', result.delivery.response_time_ms + 'ms');
+} else {
+  console.error('Test failed:', result.message);
+}`,
+          },
+          {
+            title: "Test Payload",
+            language: "json",
+            code: `{
+  "id": "evt_test_abc123",
+  "type": "webhook.test",
+  "api_version": "2024-01",
+  "created": 1703250000,
+  "livemode": false,
+  "data": {
+    "object": {
+      "webhook_id": "whk_abc123def456",
+      "message": "Test webhook from Sendly",
+      "timestamp": 1703250000
+    }
+  }
+}`,
+          },
+        ],
+      },
+      {
+        id: "rotate-secret",
+        title: "Rotate Secret",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Generate a new webhook secret. The old secret remains valid for 24
+              hours to allow for a graceful transition.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-green-500/10 text-green-500 border-green-500/20 font-bold"
+              >
+                POST
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks/:id/rotate-secret
+              </code>
+            </div>
+
+            <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-lg flex gap-3">
+              <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
+              <div>
+                <p className="font-semibold text-green-500 text-sm">
+                  24-Hour Grace Period
+                </p>
+                <p className="text-sm text-green-500/80 mt-1">
+                  Both the old and new secrets will work for 24 hours, giving
+                  you time to update your application without downtime.
+                </p>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `const result = await sendly.webhooks.rotateSecret('whk_abc123def456');
+
+console.log('New secret:', result.secret);
+console.log('Old secret expires:', result.previous_secret_expires_at);
+
+// Update your application with the new secret
+// You have 24 hours before the old secret stops working`,
+          },
+          {
+            title: "Response",
+            language: "json",
+            code: `{
+  "secret": "whsec_new_secret_abc123...",
+  "previous_secret_expires_at": "2025-12-23T10:30:00Z",
+  "webhook": {
+    "id": "whk_abc123def456",
+    "url": "https://your-app.com/webhooks/sendly",
+    ...
+  }
+}`,
+          },
+        ],
+      },
+      {
+        id: "list-deliveries",
+        title: "List Deliveries",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Retrieve the delivery history for a webhook, including successful
+              deliveries and failures.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-blue-500/10 text-blue-500 border-blue-500/20 font-bold"
+              >
+                GET
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks/:id/deliveries
+              </code>
+            </div>
+
+            <h3 className="font-semibold text-foreground mt-8 mb-4 text-lg">
+              Query Parameters
+            </h3>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">Parameter</div>
+                <div className="col-span-2">Type</div>
+                <div className="col-span-7">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">limit</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    number
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Number of deliveries to return (1-100, default 50).
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">
+                    status
+                  </div>
+                  <div className="col-span-2 font-mono text-muted-foreground">
+                    string
+                  </div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Filter by status: pending, delivered, failed.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "typescript",
+            code: `// Get recent deliveries
+const deliveries = await sendly.webhooks.listDeliveries('whk_abc123def456');
+
+for (const delivery of deliveries) {
+  console.log(\`\${delivery.event_type}: \${delivery.status}\`);
+  if (delivery.error_message) {
+    console.log(\`  Error: \${delivery.error_message}\`);
+  }
+}
+
+// Filter by status
+const failed = await sendly.webhooks.listDeliveries('whk_abc123def456', {
+  status: 'failed',
+  limit: 10
+});`,
+          },
+          {
+            title: "Response",
+            language: "json",
+            code: `[
+  {
+    "id": "del_abc123",
+    "webhook_id": "whk_abc123def456",
+    "event_id": "evt_xyz789",
+    "event_type": "message.delivered",
+    "attempt_number": 1,
+    "max_attempts": 6,
+    "status": "delivered",
+    "response_status_code": 200,
+    "response_time_ms": 145,
+    "created_at": "2025-12-22T10:30:00Z",
+    "delivered_at": "2025-12-22T10:30:00Z"
+  },
+  {
+    "id": "del_def456",
+    "webhook_id": "whk_abc123def456",
+    "event_id": "evt_abc123",
+    "event_type": "message.failed",
+    "attempt_number": 3,
+    "max_attempts": 6,
+    "status": "failed",
+    "response_status_code": 500,
+    "response_time_ms": 30012,
+    "error_message": "Timeout after 30 seconds",
+    "error_code": "timeout",
+    "next_retry_at": "2025-12-22T11:00:00Z",
+    "created_at": "2025-12-22T10:30:00Z"
+  }
+]`,
+          },
+        ],
+      },
+      {
+        id: "event-types",
+        title: "Event Types",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              List all available webhook event types.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge
+                variant="outline"
+                className="bg-blue-500/10 text-blue-500 border-blue-500/20 font-bold"
+              >
+                GET
+              </Badge>
+              <code className="text-sm font-mono text-foreground">
+                /v1/webhooks/event-types
+              </code>
+            </div>
+
+            <div className="border border-border rounded-lg overflow-hidden mt-6">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-4">Event Type</div>
+                <div className="col-span-8">Description</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-mono text-primary">
+                    message.sent
+                  </div>
+                  <div className="col-span-8 text-muted-foreground">
+                    Message accepted by carrier and is being sent.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-mono text-primary">
+                    message.delivered
+                  </div>
+                  <div className="col-span-8 text-muted-foreground">
+                    Message successfully delivered to recipient.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-mono text-primary">
+                    message.failed
+                  </div>
+                  <div className="col-span-8 text-muted-foreground">
+                    Message delivery failed permanently.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-mono text-primary">
+                    message.bounced
+                  </div>
+                  <div className="col-span-8 text-muted-foreground">
+                    Message bounced due to invalid recipient or carrier
+                    rejection.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Response",
+            language: "json",
+            code: `{
+  "events": [
+    { "type": "message.sent", "description": "Message accepted by carrier and is being sent" },
+    { "type": "message.delivered", "description": "Message successfully delivered to recipient" },
+    { "type": "message.failed", "description": "Message delivery failed permanently" },
+    { "type": "message.bounced", "description": "Message bounced due to invalid recipient or carrier rejection" }
+  ]
+}`,
+          },
+        ],
+      },
+      {
+        id: "circuit-breaker",
+        title: "Circuit Breaker",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Sendly implements a circuit breaker pattern to protect both your
+              endpoint and our delivery system. If your webhook fails
+              repeatedly, the circuit opens and deliveries are paused
+              temporarily.
+            </p>
+
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-secondary/30 text-sm font-mono font-bold">
+                <div className="col-span-3">State</div>
+                <div className="col-span-9">Behavior</div>
+              </div>
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-green-500">
+                    closed
+                  </div>
+                  <div className="col-span-9 text-muted-foreground">
+                    Normal operation. All events are delivered.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-red-500">open</div>
+                  <div className="col-span-9 text-muted-foreground">
+                    Circuit opened after 5 consecutive failures. Deliveries
+                    paused for 5 minutes.
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-yellow-500">
+                    half_open
+                  </div>
+                  <div className="col-span-9 text-muted-foreground">
+                    Testing mode. A few deliveries are attempted. If successful,
+                    circuit closes.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg flex gap-3 mt-6">
+              <Info className="w-5 h-5 text-blue-500 shrink-0" />
+              <div>
+                <p className="font-semibold text-blue-500 text-sm">
+                  Automatic Recovery
+                </p>
+                <p className="text-sm text-blue-500/80 mt-1">
+                  The circuit automatically attempts to recover after 5 minutes.
+                  Fix your endpoint issues and the webhook will resume normal
+                  operation.
+                </p>
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        id: "cli-listen",
+        title: "CLI Local Development",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Use the Sendly CLI to receive webhooks on your local development
+              machine without exposing it to the internet.
+            </p>
+
+            <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-lg flex gap-3">
+              <Terminal className="w-5 h-5 text-green-500 shrink-0" />
+              <div>
+                <p className="font-semibold text-green-500 text-sm">
+                  Just Like Stripe CLI
+                </p>
+                <p className="text-sm text-green-500/80 mt-1">
+                  The{" "}
+                  <code className="bg-green-500/20 px-1 rounded">
+                    sendly webhooks listen
+                  </code>{" "}
+                  command creates a secure tunnel to forward events to your
+                  localhost.
+                </p>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Install CLI",
+            language: "bash",
+            code: `npm install -g @sendly/cli
+sendly login`,
+          },
+          {
+            title: "Start Listener",
+            language: "bash",
+            code: `# Forward to localhost:3000/webhook
+sendly webhooks listen
+
+# Custom port and path
+sendly webhooks listen --forward http://localhost:8080/api/webhooks
+
+# Filter events
+sendly webhooks listen --events message.delivered,message.failed`,
+          },
+          {
+            title: "Output",
+            language: "text",
+            code: `Webhook listener ready!
+
+  Tunnel URL:     https://sendly-abc123.loca.lt
+  Forwarding to:  http://localhost:3000/webhook
+  Events:         message.sent, message.delivered, message.failed, message.bounced
+
+  Webhook Secret:
+  whsec_abc123def456...
+
+Use this secret to verify webhook signatures in your app.
+
+Waiting for events...
+────────────────────────────────────────────────────────
+
+10:30:15 → message.sent
+  message_id: msg_abc123
+  to: +15551234567
+
+  ✓ Forwarded to http://localhost:3000/webhook (200)
+
+10:30:45 → message.delivered
+  message_id: msg_abc123
+  to: +15551234567
+
+  ✓ Forwarded to http://localhost:3000/webhook (200)`,
+          },
+        ],
       },
     ],
   },

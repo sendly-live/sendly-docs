@@ -1771,17 +1771,28 @@ for (const batch of batches.data) {
   "/docs/cli": {
     title: "CLI Reference",
     subtitle: "Sendly command-line interface for developers.",
-    updatedAt: "Dec 16, 2025",
+    updatedAt: "Dec 23, 2025",
+    version: "v3.0.0 (Beta)",
     sections: [
       {
         id: "installation",
         title: "Installation",
         content: (
           <div className="space-y-6">
+            <div className="p-4 border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200 font-semibold mb-2">
+                <Info className="w-4 h-4" />
+                Beta Release
+              </div>
+              <p className="text-yellow-700 dark:text-yellow-300 text-sm">
+                CLI v3.0.0 includes new OAuth authentication and enhanced security features. 
+                Some commands may have breaking changes from v2.x.
+              </p>
+            </div>
             <p className="text-muted-foreground">
-              Install the Sendly CLI globally using npm, yarn, or pnpm.
+              Install the Sendly CLI globally using npm, yarn, pnpm, or Homebrew.
             </p>
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="p-4 border border-border rounded-lg bg-card">
                 <div className="font-bold mb-2 text-foreground">npm</div>
                 <code className="text-xs bg-secondary p-2 rounded block">
@@ -1800,6 +1811,13 @@ for (const batch of batches.data) {
                   pnpm add -g @sendly/cli
                 </code>
               </div>
+              <div className="p-4 border border-border rounded-lg bg-card">
+                <div className="font-bold mb-2 text-foreground">Homebrew</div>
+                <code className="text-xs bg-secondary p-2 rounded block">
+                  brew tap sendly-live/tap<br />
+                  brew install sendly
+                </code>
+              </div>
             </div>
           </div>
         ),
@@ -1808,7 +1826,7 @@ for (const batch of batches.data) {
             title: "Verify Installation",
             language: "bash",
             code: `sendly --version
-# sendly/2.2.0 darwin-arm64 node-v20.0.0`,
+# sendly/3.0.0 darwin-arm64 node-v20.0.0`,
           },
         ],
       },
@@ -1818,25 +1836,55 @@ for (const batch of batches.data) {
         content: (
           <div className="space-y-6">
             <p className="text-muted-foreground">
-              Authenticate with your Sendly API key before using the CLI.
+              CLI v3.0.0 introduces secure OAuth device flow authentication alongside traditional API key authentication.
             </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 border border-border rounded-lg bg-card">
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="w-4 h-4 text-green-500" />
+                  <span className="font-semibold text-green-600 dark:text-green-400">Recommended</span>
+                </div>
+                <div className="font-bold mb-2 text-foreground">OAuth Login</div>
+                <p className="text-xs text-muted-foreground">
+                  Secure browser-based authentication with session tokens
+                </p>
+              </div>
+              <div className="p-4 border border-border rounded-lg bg-card">
+                <div className="font-bold mb-2 text-foreground">API Key Login</div>
+                <p className="text-xs text-muted-foreground">
+                  Traditional API key authentication for CI/CD and automation
+                </p>
+              </div>
+            </div>
           </div>
         ),
         codeBlocks: [
           {
-            title: "Login with API Key",
+            title: "OAuth Authentication (Recommended)",
             language: "bash",
-            code: `# Interactive login
+            code: `# Interactive OAuth login (opens browser)
 sendly login
-
-# Login with API key directly
-sendly login --api-key sk_test_...
 
 # Check authentication status
 sendly whoami
 
+# View available commands after login
+sendly onboarding
+
 # Logout
 sendly logout`,
+          },
+          {
+            title: "API Key Authentication",
+            language: "bash",
+            code: `# Set API key directly
+sendly config set api_key sk_test_...
+
+# Or use environment variable
+export SENDLY_API_KEY=sk_test_...
+
+# Check authentication status
+sendly whoami`,
           },
         ],
       },

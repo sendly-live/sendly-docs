@@ -2045,7 +2045,7 @@ export const docsContent: Record<string, DocPage> = {
               <div className="p-3 border border-border rounded-lg bg-card font-mono text-sm">
                 <span className="text-muted-foreground"># Go</span>
                 <br />
-                go get github.com/sendly-live/sendly-go
+                go get github.com/SendlyHQ/sendly-go
               </div>
               <div className="p-3 border border-border rounded-lg bg-card font-mono text-sm">
                 <span className="text-muted-foreground"># Ruby</span>
@@ -2543,7 +2543,7 @@ batch = client.messages.send_batch(messages=[
           {
             title: "Installation",
             language: "bash",
-            code: `go get github.com/sendly-live/sendly-go`,
+            code: `go get github.com/SendlyHQ/sendly-go`,
           },
           {
             title: "Usage",
@@ -2553,7 +2553,7 @@ batch = client.messages.send_batch(messages=[
 import (
     "context"
     "fmt"
-    "github.com/sendly-live/sendly-go/sendly"
+    "github.com/SendlyHQ/sendly-go/sendly"
 )
 
 func main() {
@@ -3193,7 +3193,7 @@ def handle_webhook():
               <div className="p-4 border border-border rounded-lg bg-card">
                 <div className="font-bold mb-2 text-foreground">Homebrew</div>
                 <code className="text-xs bg-secondary p-2 rounded block">
-                  brew tap sendly-live/tap
+                  brew tap SendlyHQ/tap
                   <br />
                   brew install sendly
                 </code>

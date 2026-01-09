@@ -4285,4 +4285,1815 @@ message = client.messages.send(
       },
     ],
   },
+
+  "/docs/verify": {
+    title: "Verify API",
+    subtitle: "Send and verify one-time passwords (OTP) for phone verification.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "overview",
+        title: "Overview",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              The Verify API provides a complete solution for phone number verification using OTP codes sent via SMS.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 border border-border rounded-lg">
+                <div className="font-semibold mb-2">Features</div>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• 4-10 digit OTP codes</li>
+                  <li>• Configurable expiration (60s - 1 hour)</li>
+                  <li>• Built-in rate limiting</li>
+                  <li>• Retry logic with attempt tracking</li>
+                  <li>• Sandbox mode for testing</li>
+                </ul>
+              </div>
+              <div className="p-4 border border-border rounded-lg">
+                <div className="font-semibold mb-2">Two Approaches</div>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• <strong>Hosted Flow:</strong> ~20 lines, Sendly handles UI</li>
+                  <li>• <strong>Direct API:</strong> Full control over UX</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        id: "send-otp",
+        title: "Send OTP",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Send a verification code to a phone number.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 font-bold">
+                POST
+              </Badge>
+              <code className="text-sm font-mono text-foreground">/api/v1/verify</code>
+            </div>
+            <h3 className="font-semibold text-foreground mt-8 mb-4 text-lg">Request Body</h3>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">to</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">string</div>
+                  <div className="col-span-7 text-muted-foreground">
+                    Phone number in E.164 format
+                    <span className="ml-2 inline-block px-1.5 py-0.5 rounded border border-red-500/30 bg-red-500/10 text-red-500 text-[10px] uppercase font-bold">Required</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">app_name</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">string</div>
+                  <div className="col-span-7 text-muted-foreground">Your app name shown in message</div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">code_length</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">integer</div>
+                  <div className="col-span-7 text-muted-foreground">OTP length (4-10, default: 6)</div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-primary">timeout_secs</div>
+                  <div className="col-span-2 font-mono text-muted-foreground">integer</div>
+                  <div className="col-span-7 text-muted-foreground">Expiration in seconds (60-3600, default: 300)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `import Sendly from '@sendly/node';
+
+const sendly = new Sendly('sk_live_v1_your_key');
+
+const verification = await sendly.verify.send({
+  to: '+15551234567',
+  appName: 'MyApp',
+  codeLength: 6,
+  timeoutSecs: 300
+});
+
+console.log('Verification ID:', verification.id);
+// In sandbox: verification.sandboxCode contains the OTP`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `from sendly import Sendly
+
+client = Sendly('sk_live_v1_your_key')
+
+verification = client.verify.send(
+    to='+15551234567',
+    app_name='MyApp',
+    code_length=6,
+    timeout_secs=300
+)
+
+print(f'Verification ID: {verification.id}')
+# In sandbox: verification.sandbox_code contains the OTP`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `client := sendly.NewClient("sk_live_v1_your_key")
+
+verification, err := client.Verify.Send(ctx, &sendly.SendVerificationRequest{
+    To:          "+15551234567",
+    AppName:     "MyApp",
+    CodeLength:  6,
+    TimeoutSecs: 300,
+})
+if err != nil {
+    panic(err)
+}
+
+fmt.Printf("Verification ID: %s\\n", verification.ID)`,
+          },
+          {
+            title: "Ruby",
+            language: "ruby",
+            code: `client = Sendly::Client.new('sk_live_v1_your_key')
+
+verification = client.verify.send(
+  to: '+15551234567',
+  app_name: 'MyApp',
+  code_length: 6,
+  timeout_secs: 300
+)
+
+puts "Verification ID: #{verification.id}"`,
+          },
+          {
+            title: "PHP",
+            language: "php",
+            code: `$sendly = new Sendly\\Client('sk_live_v1_your_key');
+
+$verification = $sendly->verify->send([
+    'to' => '+15551234567',
+    'app_name' => 'MyApp',
+    'code_length' => 6,
+    'timeout_secs' => 300
+]);
+
+echo "Verification ID: " . $verification['id'];`,
+          },
+          {
+            title: "Java",
+            language: "java",
+            code: `Sendly sendly = new Sendly("sk_live_v1_your_key");
+
+Verification verification = sendly.verify().send(
+    new SendVerificationRequest()
+        .to("+15551234567")
+        .appName("MyApp")
+        .codeLength(6)
+        .timeoutSecs(300)
+);
+
+System.out.println("Verification ID: " + verification.getId());`,
+          },
+          {
+            title: "C#",
+            language: "csharp",
+            code: `var sendly = new SendlyClient("sk_live_v1_your_key");
+
+var verification = await sendly.Verify.SendAsync(new SendVerificationRequest {
+    To = "+15551234567",
+    AppName = "MyApp",
+    CodeLength = 6,
+    TimeoutSecs = 300
+});
+
+Console.WriteLine($"Verification ID: {verification.Id}");`,
+          },
+          {
+            title: "Rust",
+            language: "rust",
+            code: `let client = sendly::Client::new("sk_live_v1_your_key");
+
+let verification = client.verify().send(
+    SendVerificationRequest::new("+15551234567")
+        .app_name("MyApp")
+        .code_length(6)
+        .timeout_secs(300)
+).await?;
+
+println!("Verification ID: {}", verification.id);`,
+          },
+          {
+            title: "cURL",
+            language: "bash",
+            code: `curl -X POST https://sendly.live/api/v1/verify \\
+  -H "Authorization: Bearer sk_live_v1_your_key" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "to": "+15551234567",
+    "app_name": "MyApp",
+    "code_length": 6,
+    "timeout_secs": 300
+  }'`,
+          },
+        ],
+      },
+      {
+        id: "check-otp",
+        title: "Check OTP",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Verify the code entered by the user.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 font-bold">
+                POST
+              </Badge>
+              <code className="text-sm font-mono text-foreground">/api/v1/verify/:id/check</code>
+            </div>
+            <h3 className="font-semibold text-foreground mt-8 mb-4 text-lg">Response Status</h3>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-green-500">verified</div>
+                  <div className="col-span-9 text-muted-foreground">Code is correct, phone verified</div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-yellow-500">invalid</div>
+                  <div className="col-span-9 text-muted-foreground">Wrong code, check remainingAttempts</div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-red-500">expired</div>
+                  <div className="col-span-9 text-muted-foreground">Code has expired, need to resend</div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-3 font-mono text-red-500">failed</div>
+                  <div className="col-span-9 text-muted-foreground">Max attempts exceeded</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `const result = await sendly.verify.check(verificationId, {
+  code: userEnteredCode
+});
+
+if (result.status === 'verified') {
+  console.log('Phone verified!');
+} else if (result.status === 'invalid') {
+  console.log(\`Wrong code. \${result.remainingAttempts} attempts left.\`);
+}`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `result = client.verify.check(verification_id, code=user_entered_code)
+
+if result.status == "verified":
+    print("Phone verified!")
+elif result.status == "invalid":
+    print(f"Wrong code. {result.remaining_attempts} attempts left.")`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `result, err := client.Verify.Check(ctx, verificationID, &sendly.CheckRequest{
+    Code: userEnteredCode,
+})
+
+if result.Status == "verified" {
+    fmt.Println("Phone verified!")
+} else if result.Status == "invalid" {
+    fmt.Printf("Wrong code. %d attempts left.\\n", result.RemainingAttempts)
+}`,
+          },
+          {
+            title: "Ruby",
+            language: "ruby",
+            code: `result = client.verify.check(verification_id, code: user_entered_code)
+
+if result.status == "verified"
+  puts "Phone verified!"
+elsif result.status == "invalid"
+  puts "Wrong code. #{result.remaining_attempts} attempts left."
+end`,
+          },
+          {
+            title: "PHP",
+            language: "php",
+            code: `$result = $sendly->verify->check($verificationId, ['code' => $userEnteredCode]);
+
+if ($result['status'] === 'verified') {
+    echo "Phone verified!";
+} elseif ($result['status'] === 'invalid') {
+    echo "Wrong code. " . $result['remaining_attempts'] . " attempts left.";
+}`,
+          },
+          {
+            title: "Java",
+            language: "java",
+            code: `CheckResult result = sendly.verify().check(verificationId, userEnteredCode);
+
+if (result.getStatus().equals("verified")) {
+    System.out.println("Phone verified!");
+} else if (result.getStatus().equals("invalid")) {
+    System.out.println("Wrong code. " + result.getRemainingAttempts() + " attempts left.");
+}`,
+          },
+          {
+            title: "C#",
+            language: "csharp",
+            code: `var result = await sendly.Verify.CheckAsync(verificationId, userEnteredCode);
+
+if (result.Status == "verified") {
+    Console.WriteLine("Phone verified!");
+} else if (result.Status == "invalid") {
+    Console.WriteLine($"Wrong code. {result.RemainingAttempts} attempts left.");
+}`,
+          },
+          {
+            title: "Rust",
+            language: "rust",
+            code: `let result = client.verify().check(&verification_id, &user_entered_code).await?;
+
+match result.status.as_str() {
+    "verified" => println!("Phone verified!"),
+    "invalid" => println!("Wrong code. {} attempts left.", result.remaining_attempts),
+    _ => {}
+}`,
+          },
+        ],
+      },
+      {
+        id: "resend-otp",
+        title: "Resend OTP",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Resend a verification code if the original expired or wasn't received.
+            </p>
+            <div className="flex items-center gap-2 my-4 p-3 bg-secondary/30 rounded-md border border-border w-fit">
+              <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 font-bold">
+                POST
+              </Badge>
+              <code className="text-sm font-mono text-foreground">/api/v1/verify/:id/resend</code>
+            </div>
+            <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-lg">
+              <h4 className="font-semibold text-yellow-500 mb-2">Note</h4>
+              <p className="text-sm text-yellow-500/80">
+                Each resend costs credits. Rate limit: 5 OTPs per phone per 10 minutes.
+              </p>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `const newVerification = await sendly.verify.resend(verificationId);
+console.log('New verification ID:', newVerification.id);`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `new_verification = client.verify.resend(verification_id)
+print(f"New verification ID: {new_verification.id}")`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `newVerification, err := client.Verify.Resend(ctx, verificationID)
+fmt.Printf("New verification ID: %s\\n", newVerification.ID)`,
+          },
+          {
+            title: "Ruby",
+            language: "ruby",
+            code: `new_verification = client.verify.resend(verification_id)
+puts "New verification ID: #{new_verification.id}"`,
+          },
+          {
+            title: "PHP",
+            language: "php",
+            code: `$newVerification = $sendly->verify->resend($verificationId);
+echo "New verification ID: " . $newVerification['id'];`,
+          },
+          {
+            title: "Java",
+            language: "java",
+            code: `Verification newVerification = sendly.verify().resend(verificationId);
+System.out.println("New verification ID: " + newVerification.getId());`,
+          },
+          {
+            title: "C#",
+            language: "csharp",
+            code: `var newVerification = await sendly.Verify.ResendAsync(verificationId);
+Console.WriteLine($"New verification ID: {newVerification.Id}");`,
+          },
+          {
+            title: "Rust",
+            language: "rust",
+            code: `let new_verification = client.verify().resend(&verification_id).await?;
+println!("New verification ID: {}", new_verification.id);`,
+          },
+        ],
+      },
+      {
+        id: "hosted-flow",
+        title: "Hosted Flow",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Let Sendly handle the entire verification UI. Just redirect users and validate the result.
+            </p>
+            <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-lg">
+              <h4 className="font-semibold text-green-500 mb-2">Recommended for Quick Integration</h4>
+              <p className="text-sm text-green-500/80">
+                ~20 lines of code. Sendly handles phone input, country selection, OTP entry, error states, and mobile responsiveness.
+              </p>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Create Session",
+            language: "javascript",
+            code: `// 1. Create a verification session
+const session = await sendly.verify.sessions.create({
+  successUrl: 'https://yourapp.com/verified?token={TOKEN}',
+  cancelUrl: 'https://yourapp.com/signup',
+  brandName: 'YourApp',
+  brandColor: '#f59e0b',
+  metadata: { userId: user.id }
+});
+
+// 2. Redirect user to Sendly's hosted UI
+res.redirect(session.url);`,
+          },
+          {
+            title: "Validate Token",
+            language: "javascript",
+            code: `// 3. When user returns, validate the token
+app.get('/verified', async (req, res) => {
+  const { token } = req.query;
+  
+  const result = await sendly.verify.sessions.validate({ token });
+  
+  if (result.valid) {
+    // Phone verified! Save to database
+    await db.users.update({
+      where: { id: result.metadata.userId },
+      data: { phone: result.phone, phoneVerified: true }
+    });
+    res.redirect('/dashboard');
+  } else {
+    res.redirect('/signup?error=verification_failed');
+  }
+});`,
+          },
+        ],
+      },
+      {
+        id: "sandbox-testing",
+        title: "Sandbox Testing",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Use test API keys (<code className="text-primary">sk_test_</code>) for sandbox mode.
+            </p>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-semibold">No SMS sent</div>
+                  <div className="col-span-8 text-muted-foreground">Messages are simulated, saving credits</div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-semibold">sandbox_code returned</div>
+                  <div className="col-span-8 text-muted-foreground">OTP code included in API response for testing</div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-semibold">Magic number</div>
+                  <div className="col-span-8 text-muted-foreground"><code>+15005550000</code> always succeeds</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Sandbox Response",
+            language: "json",
+            code: `{
+  "id": "ver_test_abc123",
+  "status": "pending",
+  "phone": "+15551234567",
+  "expires_at": "2026-01-09T12:05:00Z",
+  "sandbox": true,
+  "sandbox_code": "123456"
+}`,
+          },
+        ],
+      },
+    ],
+  },
+
+  "/docs/tutorials": {
+    title: "Tutorials",
+    subtitle: "Step-by-step guides to build with Sendly.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "overview",
+        title: "Overview",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Learn Sendly through hands-on tutorials. Each tutorial walks you through building something real.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <a href="/docs/tutorials/send-sms" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary transition-colors">Send Your First SMS</div>
+                <p className="text-sm text-muted-foreground mt-1">5 minutes • Send a test message in sandbox mode</p>
+              </a>
+              <a href="/docs/tutorials/otp" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary transition-colors">Phone Verification</div>
+                <p className="text-sm text-muted-foreground mt-1">15 minutes • Build a complete OTP flow</p>
+              </a>
+              <a href="/docs/tutorials/webhooks" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary transition-colors">Set Up Webhooks</div>
+                <p className="text-sm text-muted-foreground mt-1">10 minutes • Receive delivery notifications</p>
+              </a>
+            </div>
+          </div>
+        ),
+      },
+    ],
+  },
+
+  "/docs/tutorials/send-sms": {
+    title: "Send Your First SMS",
+    subtitle: "Send a test message in 5 minutes using sandbox mode.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "prerequisites",
+        title: "Prerequisites",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">Before starting, make sure you have:</p>
+            <ul className="list-disc list-inside text-muted-foreground space-y-1">
+              <li>A <a href="https://sendly.live" className="text-primary hover:underline">Sendly account</a> (free)</li>
+              <li>Your test API key from the <a href="/dashboard/api-keys" className="text-primary hover:underline">Dashboard</a></li>
+            </ul>
+          </div>
+        ),
+      },
+      {
+        id: "step-1",
+        title: "Step 1: Set Up Your API Key",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Create a <code>.env</code> file in your project:
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: ".env",
+            language: "bash",
+            code: `SENDLY_API_KEY=sk_test_v1_your_key_here`,
+          },
+        ],
+      },
+      {
+        id: "step-2",
+        title: "Step 2: Install the SDK",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">Choose your language and install the SDK:</p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "bash",
+            code: `npm install @sendly/node`,
+          },
+          {
+            title: "Python",
+            language: "bash",
+            code: `pip install sendly`,
+          },
+          {
+            title: "Go",
+            language: "bash",
+            code: `go get github.com/SendlyHQ/sendly-go`,
+          },
+          {
+            title: "Ruby",
+            language: "bash",
+            code: `gem install sendly`,
+          },
+          {
+            title: "PHP",
+            language: "bash",
+            code: `composer require sendly/sendly-php`,
+          },
+          {
+            title: "Java (Maven)",
+            language: "xml",
+            code: `<dependency>
+    <groupId>com.sendly</groupId>
+    <artifactId>sendly-java</artifactId>
+    <version>1.0.0</version>
+</dependency>`,
+          },
+          {
+            title: "C# (.NET)",
+            language: "bash",
+            code: `dotnet add package Sendly`,
+          },
+          {
+            title: "Rust",
+            language: "toml",
+            code: `[dependencies]
+sendly = "1.0"
+tokio = { version = "1", features = ["full"] }`,
+          },
+        ],
+      },
+      {
+        id: "step-3",
+        title: "Step 3: Send a Message",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Create a file and send your first message to the magic test number:
+            </p>
+            <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-lg">
+              <p className="text-sm text-blue-500">
+                The magic number <code>+15005550000</code> always succeeds in sandbox mode.
+              </p>
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `import Sendly from '@sendly/node';
+
+const client = new Sendly(process.env.SENDLY_API_KEY);
+
+const message = await client.messages.send({
+  to: '+15005550000',
+  text: 'Hello from Sendly!',
+  messageType: 'transactional'
+});
+
+console.log('Message ID:', message.id);
+console.log('Status:', message.status);`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `import os
+from sendly import Sendly
+
+client = Sendly(os.environ['SENDLY_API_KEY'])
+
+message = client.messages.send(
+    to='+15005550000',
+    text='Hello from Sendly!',
+    message_type='transactional'
+)
+
+print(f'Message ID: {message.id}')
+print(f'Status: {message.status}')`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    "github.com/SendlyHQ/sendly-go/sendly"
+)
+
+func main() {
+    client := sendly.NewClient(os.Getenv("SENDLY_API_KEY"))
+
+    msg, err := client.Messages.Send(context.Background(), &sendly.SendMessageRequest{
+        To:          "+15005550000",
+        Text:        "Hello from Sendly!",
+        MessageType: "transactional",
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Println("Message ID:", msg.ID)
+    fmt.Println("Status:", msg.Status)
+}`,
+          },
+          {
+            title: "Ruby",
+            language: "ruby",
+            code: `require 'sendly'
+
+client = Sendly::Client.new(ENV['SENDLY_API_KEY'])
+
+message = client.messages.send(
+  to: '+15005550000',
+  text: 'Hello from Sendly!',
+  message_type: 'transactional'
+)
+
+puts "Message ID: #{message.id}"
+puts "Status: #{message.status}"`,
+          },
+          {
+            title: "PHP",
+            language: "php",
+            code: `<?php
+require 'vendor/autoload.php';
+
+$sendly = new Sendly\\Client(getenv('SENDLY_API_KEY'));
+
+$message = $sendly->messages->send([
+    'to' => '+15005550000',
+    'text' => 'Hello from Sendly!',
+    'message_type' => 'transactional'
+]);
+
+echo "Message ID: " . $message['id'] . "\\n";
+echo "Status: " . $message['status'] . "\\n";`,
+          },
+          {
+            title: "Java",
+            language: "java",
+            code: `import com.sendly.Sendly;
+import com.sendly.model.Message;
+
+public class Send {
+    public static void main(String[] args) {
+        Sendly sendly = new Sendly(System.getenv("SENDLY_API_KEY"));
+
+        Message message = sendly.messages().send(
+            new SendMessageRequest()
+                .to("+15005550000")
+                .text("Hello from Sendly!")
+                .messageType("transactional")
+        );
+
+        System.out.println("Message ID: " + message.getId());
+        System.out.println("Status: " + message.getStatus());
+    }
+}`,
+          },
+          {
+            title: "C#",
+            language: "csharp",
+            code: `using Sendly;
+
+var client = new SendlyClient(Environment.GetEnvironmentVariable("SENDLY_API_KEY"));
+
+var message = await client.Messages.SendAsync(new SendMessageRequest {
+    To = "+15005550000",
+    Text = "Hello from Sendly!",
+    MessageType = "transactional"
+});
+
+Console.WriteLine($"Message ID: {message.Id}");
+Console.WriteLine($"Status: {message.Status}");`,
+          },
+          {
+            title: "Rust",
+            language: "rust",
+            code: `use sendly::Client;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = Client::new(std::env::var("SENDLY_API_KEY")?);
+
+    let message = client.messages().send(
+        SendMessageRequest::new("+15005550000", "Hello from Sendly!")
+            .message_type("transactional")
+    ).await?;
+
+    println!("Message ID: {}", message.id);
+    println!("Status: {}", message.status);
+    Ok(())
+}`,
+          },
+        ],
+      },
+      {
+        id: "step-4",
+        title: "Step 4: Check the Output",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">You should see output like:</p>
+            <div className="bg-secondary/30 p-4 rounded-lg font-mono text-sm">
+              <p>Message ID: msg_abc123def456</p>
+              <p>Status: sent</p>
+            </div>
+            <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-lg mt-4">
+              <h4 className="font-semibold text-green-500">Congratulations!</h4>
+              <p className="text-sm text-green-500/80 mt-1">
+                You've sent your first message with Sendly. The status "sent" means the message was accepted.
+              </p>
+            </div>
+          </div>
+        ),
+      },
+      {
+        id: "next-steps",
+        title: "Next Steps",
+        content: (
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <a href="/docs/tutorials/otp" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Phone Verification</div>
+                <p className="text-sm text-muted-foreground mt-1">Build an OTP verification flow</p>
+              </a>
+              <a href="/docs/tutorials/webhooks" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Set Up Webhooks</div>
+                <p className="text-sm text-muted-foreground mt-1">Get delivery status notifications</p>
+              </a>
+            </div>
+          </div>
+        ),
+      },
+    ],
+  },
+
+  "/docs/tutorials/otp": {
+    title: "Phone Verification",
+    subtitle: "Build a complete phone verification flow in 15 minutes.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "overview",
+        title: "What You'll Build",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              A complete phone verification system where users:
+            </p>
+            <ol className="list-decimal list-inside text-muted-foreground space-y-1">
+              <li>Enter their phone number</li>
+              <li>Receive a 6-digit code via SMS</li>
+              <li>Enter the code to verify their phone</li>
+            </ol>
+            <p className="text-muted-foreground mt-4">
+              <strong>Time required:</strong> 15 minutes
+            </p>
+          </div>
+        ),
+      },
+      {
+        id: "step-1",
+        title: "Step 1: Create the Send OTP Endpoint",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Create an API endpoint that sends a verification code to the user's phone.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js (Express)",
+            language: "javascript",
+            code: `import express from 'express';
+import Sendly from '@sendly/node';
+
+const app = express();
+app.use(express.json());
+
+const sendly = new Sendly(process.env.SENDLY_API_KEY);
+
+app.post('/api/send-otp', async (req, res) => {
+  const { phone } = req.body;
+
+  const verification = await sendly.verify.send({
+    to: phone,
+    appName: 'YourApp'
+  });
+
+  res.json({
+    verificationId: verification.id,
+    expiresAt: verification.expiresAt,
+    // Include sandbox code for testing
+    ...(verification.sandboxCode && { sandboxCode: verification.sandboxCode })
+  });
+});`,
+          },
+          {
+            title: "Python (Flask)",
+            language: "python",
+            code: `from flask import Flask, request, jsonify
+from sendly import Sendly
+
+app = Flask(__name__)
+sendly = Sendly(os.environ['SENDLY_API_KEY'])
+
+@app.route('/api/send-otp', methods=['POST'])
+def send_otp():
+    phone = request.json['phone']
+    
+    verification = sendly.verify.send(
+        to=phone,
+        app_name='YourApp'
+    )
+    
+    response = {
+        'verificationId': verification.id,
+        'expiresAt': verification.expires_at
+    }
+    if verification.sandbox_code:
+        response['sandboxCode'] = verification.sandbox_code
+    
+    return jsonify(response)`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `func sendOTP(w http.ResponseWriter, r *http.Request) {
+    var req struct{ Phone string \`json:"phone"\` }
+    json.NewDecoder(r.Body).Decode(&req)
+
+    verification, err := client.Verify.Send(ctx, &sendly.SendVerificationRequest{
+        To:      req.Phone,
+        AppName: "YourApp",
+    })
+    if err != nil {
+        http.Error(w, err.Error(), 500)
+        return
+    }
+
+    json.NewEncoder(w).Encode(map[string]interface{}{
+        "verificationId": verification.ID,
+        "expiresAt":      verification.ExpiresAt,
+        "sandboxCode":    verification.SandboxCode,
+    })
+}`,
+          },
+        ],
+      },
+      {
+        id: "step-2",
+        title: "Step 2: Create the Verify OTP Endpoint",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Create an endpoint that checks the code entered by the user.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `app.post('/api/verify-otp', async (req, res) => {
+  const { verificationId, code } = req.body;
+
+  const result = await sendly.verify.check(verificationId, { code });
+
+  if (result.status === 'verified') {
+    // Mark phone as verified in your database
+    await db.users.update({
+      where: { id: req.user.id },
+      data: { phone: result.phone, phoneVerified: true }
+    });
+    res.json({ success: true, phone: result.phone });
+  } else {
+    res.json({
+      success: false,
+      status: result.status,
+      remainingAttempts: result.remainingAttempts
+    });
+  }
+});`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `@app.route('/api/verify-otp', methods=['POST'])
+def verify_otp():
+    data = request.json
+    result = sendly.verify.check(data['verificationId'], code=data['code'])
+    
+    if result.status == 'verified':
+        # Mark phone as verified in your database
+        return jsonify({'success': True, 'phone': result.phone})
+    else:
+        return jsonify({
+            'success': False,
+            'status': result.status,
+            'remainingAttempts': result.remaining_attempts
+        })`,
+          },
+        ],
+      },
+      {
+        id: "step-3",
+        title: "Step 3: Build the Frontend",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Create a simple React component for the verification flow.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "React Component",
+            language: "jsx",
+            code: `function PhoneVerification() {
+  const [phone, setPhone] = useState('');
+  const [code, setCode] = useState('');
+  const [verificationId, setVerificationId] = useState(null);
+  const [status, setStatus] = useState('idle');
+
+  async function sendCode() {
+    const res = await fetch('/api/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+    setVerificationId(data.verificationId);
+    setStatus('code_sent');
+  }
+
+  async function verifyCode() {
+    const res = await fetch('/api/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ verificationId, code })
+    });
+    const data = await res.json();
+    if (data.success) {
+      setStatus('verified');
+    } else {
+      alert(\`Wrong code. \${data.remainingAttempts} attempts left.\`);
+    }
+  }
+
+  if (status === 'verified') {
+    return <div>Phone verified successfully!</div>;
+  }
+
+  return (
+    <div>
+      {!verificationId ? (
+        <>
+          <input
+            type="tel"
+            placeholder="+1 (555) 123-4567"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          <button onClick={sendCode}>Send Code</button>
+        </>
+      ) : (
+        <>
+          <input
+            type="text"
+            placeholder="Enter 6-digit code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <button onClick={verifyCode}>Verify</button>
+        </>
+      )}
+    </div>
+  );
+}`,
+          },
+        ],
+      },
+      {
+        id: "next-steps",
+        title: "Next Steps",
+        content: (
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <a href="/docs/how-to/handle-otp-errors" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Handle OTP Errors</div>
+                <p className="text-sm text-muted-foreground mt-1">Handle expired codes, rate limits, and more</p>
+              </a>
+              <a href="/docs/how-to/resend-otp" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Resend OTP Codes</div>
+                <p className="text-sm text-muted-foreground mt-1">Implement resend with cooldown</p>
+              </a>
+            </div>
+          </div>
+        ),
+      },
+    ],
+  },
+
+  "/docs/tutorials/webhooks": {
+    title: "Set Up Webhooks",
+    subtitle: "Receive real-time delivery notifications in 10 minutes.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "overview",
+        title: "What You'll Build",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              A webhook endpoint that receives real-time notifications when messages are delivered, failed, or when verifications complete.
+            </p>
+            <p className="text-muted-foreground">
+              <strong>Time required:</strong> 10 minutes
+            </p>
+          </div>
+        ),
+      },
+      {
+        id: "step-1",
+        title: "Step 1: Create a Webhook Endpoint",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Create an HTTP endpoint that receives POST requests from Sendly.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js (Express)",
+            language: "javascript",
+            code: `import express from 'express';
+
+const app = express();
+app.use(express.json());
+
+app.post('/webhooks/sendly', (req, res) => {
+  const event = req.body;
+  
+  console.log('Event type:', event.type);
+  console.log('Message ID:', event.data.object.id);
+  
+  switch (event.type) {
+    case 'message.delivered':
+      console.log('Delivered to:', event.data.object.to);
+      break;
+    case 'message.failed':
+      console.log('Failed:', event.data.object.errorMessage);
+      break;
+    case 'verification.verified':
+      console.log('Phone verified:', event.data.object.phone);
+      break;
+  }
+  
+  res.json({ received: true });
+});
+
+app.listen(3000);`,
+          },
+          {
+            title: "Python (Flask)",
+            language: "python",
+            code: `from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/webhooks/sendly', methods=['POST'])
+def webhook():
+    event = request.json
+    
+    print(f"Event type: {event['type']}")
+    
+    if event['type'] == 'message.delivered':
+        print(f"Delivered to: {event['data']['object']['to']}")
+    elif event['type'] == 'message.failed':
+        print(f"Failed: {event['data']['object']['errorMessage']}")
+    elif event['type'] == 'verification.verified':
+        print(f"Phone verified: {event['data']['object']['phone']}")
+    
+    return jsonify({'received': True})
+
+if __name__ == '__main__':
+    app.run(port=3000)`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `package main
+
+import (
+    "encoding/json"
+    "fmt"
+    "net/http"
+)
+
+type Event struct {
+    Type string \`json:"type"\`
+    Data struct {
+        Object struct {
+            ID    string \`json:"id"\`
+            To    string \`json:"to"\`
+            Phone string \`json:"phone"\`
+        } \`json:"object"\`
+    } \`json:"data"\`
+}
+
+func webhookHandler(w http.ResponseWriter, r *http.Request) {
+    var event Event
+    json.NewDecoder(r.Body).Decode(&event)
+    
+    fmt.Printf("Event type: %s\\n", event.Type)
+    
+    switch event.Type {
+    case "message.delivered":
+        fmt.Printf("Delivered to: %s\\n", event.Data.Object.To)
+    case "verification.verified":
+        fmt.Printf("Phone verified: %s\\n", event.Data.Object.Phone)
+    }
+    
+    json.NewEncoder(w).Encode(map[string]bool{"received": true})
+}
+
+func main() {
+    http.HandleFunc("/webhooks/sendly", webhookHandler)
+    http.ListenAndServe(":3000", nil)
+}`,
+          },
+        ],
+      },
+      {
+        id: "step-2",
+        title: "Step 2: Test Locally with the CLI",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Use the Sendly CLI to forward webhook events to your local server.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Install & Listen",
+            language: "bash",
+            code: `# Install the CLI
+npm install -g @sendly/cli
+
+# Login
+sendly login
+
+# Forward webhooks to your local server
+sendly webhooks listen --forward http://localhost:3000/webhooks/sendly`,
+          },
+          {
+            title: "Trigger Test Event",
+            language: "bash",
+            code: `# In another terminal, trigger a test event
+sendly trigger message.delivered`,
+          },
+        ],
+      },
+      {
+        id: "step-3",
+        title: "Step 3: Register for Production",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Once your endpoint is deployed to a public URL, register it in the dashboard.
+            </p>
+            <ol className="list-decimal list-inside text-muted-foreground space-y-2">
+              <li>Go to <a href="/dashboard/webhooks" className="text-primary hover:underline">Dashboard → Webhooks</a></li>
+              <li>Click <strong>Create Webhook</strong></li>
+              <li>Enter your endpoint URL (e.g., <code>https://yourapp.com/webhooks/sendly</code>)</li>
+              <li>Select events: <code>message.delivered</code>, <code>message.failed</code></li>
+              <li>Save the webhook secret for signature verification</li>
+            </ol>
+          </div>
+        ),
+      },
+      {
+        id: "next-steps",
+        title: "Next Steps",
+        content: (
+          <div className="space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <a href="/docs/webhooks" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Webhook Reference</div>
+                <p className="text-sm text-muted-foreground mt-1">All event types and signature verification</p>
+              </a>
+              <a href="/docs/how-to/test-webhooks-locally" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Test Webhooks Locally</div>
+                <p className="text-sm text-muted-foreground mt-1">CLI commands and filtering options</p>
+              </a>
+            </div>
+          </div>
+        ),
+      },
+    ],
+  },
+
+  "/docs/how-to": {
+    title: "How-To Guides",
+    subtitle: "Practical recipes for common tasks.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "overview",
+        title: "Overview",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Step-by-step solutions for specific problems. Each guide focuses on getting one thing done.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <a href="/docs/how-to/test-webhooks-locally" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Test Webhooks Locally</div>
+                <p className="text-sm text-muted-foreground mt-1">Forward webhook events to localhost</p>
+              </a>
+              <a href="/docs/how-to/handle-otp-errors" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Handle OTP Errors</div>
+                <p className="text-sm text-muted-foreground mt-1">Expired codes, rate limits, invalid codes</p>
+              </a>
+              <a href="/docs/how-to/resend-otp" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Resend OTP Codes</div>
+                <p className="text-sm text-muted-foreground mt-1">Implement resend with cooldown</p>
+              </a>
+            </div>
+          </div>
+        ),
+      },
+    ],
+  },
+
+  "/docs/how-to/test-webhooks-locally": {
+    title: "Test Webhooks Locally",
+    subtitle: "Forward Sendly webhook events to your local development server.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "install",
+        title: "Install the CLI",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">Install the Sendly CLI using npm or Homebrew.</p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "npm",
+            language: "bash",
+            code: `npm install -g @sendly/cli`,
+          },
+          {
+            title: "Homebrew",
+            language: "bash",
+            code: `brew install SendlyHQ/tap/sendly`,
+          },
+        ],
+      },
+      {
+        id: "authenticate",
+        title: "Authenticate",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">Login to connect the CLI to your account.</p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Login",
+            language: "bash",
+            code: `sendly login`,
+          },
+        ],
+      },
+      {
+        id: "listen",
+        title: "Start the Listener",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Forward webhook events to your local server. The CLI creates a WebSocket connection to Sendly's servers, so no firewall configuration is needed.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Basic",
+            language: "bash",
+            code: `sendly webhooks listen --forward http://localhost:3000/webhook`,
+          },
+          {
+            title: "Filter Events",
+            language: "bash",
+            code: `sendly webhooks listen --forward http://localhost:3000/webhook --events message.delivered,message.failed`,
+          },
+          {
+            title: "Custom Port",
+            language: "bash",
+            code: `sendly webhooks listen --forward http://localhost:8080/api/webhooks`,
+          },
+        ],
+      },
+      {
+        id: "trigger",
+        title: "Trigger Test Events",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Trigger test events to verify your webhook endpoint is working.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Trigger Events",
+            language: "bash",
+            code: `# Trigger a delivery event
+sendly trigger message.delivered
+
+# Trigger a failure event
+sendly trigger message.failed
+
+# Trigger a verification event
+sendly trigger verification.verified`,
+          },
+        ],
+      },
+    ],
+  },
+
+  "/docs/how-to/handle-otp-errors": {
+    title: "Handle OTP Errors",
+    subtitle: "Handle common error scenarios in your OTP verification flow.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "expired",
+        title: "Expired Codes",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              When the status is <code className="text-yellow-500">expired</code>, automatically send a new code.
+            </p>
+            <div className="bg-secondary/30 p-3 rounded-lg text-sm">
+              <strong>User message:</strong> "This code has expired. We've sent you a new one."
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `const result = await sendly.verify.check(verificationId, { code });
+
+if (result.status === 'expired') {
+  const newVerification = await sendly.verify.resend(verificationId);
+  // Update UI with new verification ID
+}`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `result = client.verify.check(verification_id, code=code)
+
+if result.status == "expired":
+    new_verification = client.verify.resend(verification_id)
+    # Update UI with new verification ID`,
+          },
+          {
+            title: "Go",
+            language: "go",
+            code: `result, _ := client.Verify.Check(ctx, verificationID, &sendly.CheckRequest{Code: code})
+
+if result.Status == "expired" {
+    newVerification, _ := client.Verify.Resend(ctx, verificationID)
+    // Update UI with new verification ID
+}`,
+          },
+        ],
+      },
+      {
+        id: "invalid",
+        title: "Invalid Codes",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              When the code is wrong, show remaining attempts.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `const result = await sendly.verify.check(verificationId, { code });
+
+if (result.status === 'invalid') {
+  if (result.remainingAttempts > 0) {
+    // Show: "Incorrect code. X attempts remaining."
+  } else {
+    // Show: "Too many attempts. Please request a new code."
+  }
+}`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `result = client.verify.check(verification_id, code=code)
+
+if result.status == "invalid":
+    if result.remaining_attempts > 0:
+        # Show: "Incorrect code. X attempts remaining."
+    else:
+        # Show: "Too many attempts. Please request a new code."`,
+          },
+        ],
+      },
+      {
+        id: "rate-limits",
+        title: "Rate Limits",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Handle rate limit errors gracefully.
+            </p>
+            <div className="bg-secondary/30 p-3 rounded-lg text-sm">
+              <strong>Limits:</strong> 5 OTPs per phone per 10 minutes, 20 per 24 hours.
+            </div>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `try {
+  await sendly.verify.send({ to: phone });
+} catch (error) {
+  if (error.code === 'rate_limit_exceeded') {
+    // Show: "Too many requests. Please try again later."
+  }
+}`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `try:
+    client.verify.send(to=phone)
+except SendlyError as e:
+    if e.code == "rate_limit_exceeded":
+        # Show: "Too many requests. Please try again later."`,
+          },
+        ],
+      },
+    ],
+  },
+
+  "/docs/how-to/resend-otp": {
+    title: "Resend OTP Codes",
+    subtitle: "Let users request a new verification code with a cooldown.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "backend",
+        title: "Backend Endpoint",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Create an endpoint to resend the OTP code.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Node.js",
+            language: "javascript",
+            code: `app.post('/api/resend-otp', async (req, res) => {
+  const { verificationId } = req.body;
+
+  try {
+    const verification = await sendly.verify.resend(verificationId);
+    res.json({
+      verificationId: verification.id,
+      sandboxCode: verification.sandboxCode,
+    });
+  } catch (error) {
+    if (error.code === 'not_found') {
+      res.status(400).json({ error: 'Please start verification again' });
+      return;
+    }
+    throw error;
+  }
+});`,
+          },
+          {
+            title: "Python",
+            language: "python",
+            code: `@app.route('/api/resend-otp', methods=['POST'])
+def resend_otp():
+    verification_id = request.json['verificationId']
+    try:
+        verification = client.verify.resend(verification_id)
+        return jsonify({
+            'verificationId': verification.id,
+            'sandboxCode': verification.sandbox_code
+        })
+    except SendlyError as e:
+        if e.code == 'not_found':
+            return jsonify({'error': 'Please start verification again'}), 400
+        raise`,
+          },
+        ],
+      },
+      {
+        id: "frontend",
+        title: "Frontend with Cooldown",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Implement a 60-second cooldown to prevent spam.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "React",
+            language: "jsx",
+            code: `const [cooldown, setCooldown] = useState(0);
+
+async function handleResend() {
+  const response = await fetch('/api/resend-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ verificationId }),
+  });
+
+  if (response.ok) {
+    setCooldown(60);
+  }
+}
+
+useEffect(() => {
+  if (cooldown > 0) {
+    const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+    return () => clearTimeout(timer);
+  }
+}, [cooldown]);
+
+// In JSX:
+<button onClick={handleResend} disabled={cooldown > 0}>
+  {cooldown > 0 ? \`Resend in \${cooldown}s\` : "Didn't receive code? Resend"}
+</button>`,
+          },
+        ],
+      },
+    ],
+  },
+
+  "/docs/concepts": {
+    title: "Concepts",
+    subtitle: "Understand how Sendly works under the hood.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "overview",
+        title: "Overview",
+        content: (
+          <div className="space-y-6">
+            <p className="text-muted-foreground">
+              Deep dives into Sendly's architecture and design decisions.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <a href="/docs/concepts/local-development" className="p-4 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                <div className="font-semibold group-hover:text-primary">Local Development</div>
+                <p className="text-sm text-muted-foreground mt-1">Sandbox mode, test keys, and webhook tunneling</p>
+              </a>
+            </div>
+          </div>
+        ),
+      },
+    ],
+  },
+
+  "/docs/concepts/local-development": {
+    title: "Local Development",
+    subtitle: "Understanding sandbox mode, test keys, and local webhook testing.",
+    updatedAt: "Jan 9, 2026",
+    sections: [
+      {
+        id: "sandbox-mode",
+        title: "Why Sandbox Mode Exists",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              When building SMS integrations, you need to test thoroughly without sending real messages, spending credits, or annoying recipients.
+            </p>
+            <p className="text-muted-foreground">
+              Every Sendly API key comes in two flavors:
+            </p>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <div className="divide-y divide-border">
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-mono text-primary">sk_test_...</div>
+                  <div className="col-span-8 text-muted-foreground">Test keys - messages are simulated, no SMS sent</div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 p-4 text-sm">
+                  <div className="col-span-4 font-mono text-primary">sk_live_...</div>
+                  <div className="col-span-8 text-muted-foreground">Live keys - real messages sent, credits charged</div>
+                </div>
+              </div>
+            </div>
+            <p className="text-muted-foreground">
+              When you use a test key, requests go through Sendly's full validation pipeline but the final delivery step is simulated. Your code can't tell the difference.
+            </p>
+          </div>
+        ),
+      },
+      {
+        id: "magic-number",
+        title: "The Magic Test Number",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              The number <code className="text-primary">+15005550000</code> has special meaning in sandbox mode:
+            </p>
+            <ul className="list-disc list-inside text-muted-foreground space-y-1">
+              <li>Always succeeds in every scenario</li>
+              <li>Instant "delivery" without delays</li>
+              <li>Works for both messages and verifications</li>
+            </ul>
+            <p className="text-muted-foreground">
+              In production, this number is rejected as invalid - so code that accidentally uses it will fail loudly rather than silently.
+            </p>
+          </div>
+        ),
+      },
+      {
+        id: "webhook-tunneling",
+        title: "Webhooks and the Localhost Problem",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Webhooks present a unique challenge: Sendly needs to send HTTP requests to your server, but your laptop isn't accessible from the internet.
+            </p>
+            <p className="text-muted-foreground">
+              Traditional solutions use tunneling services like ngrok, which expose local ports through public URLs. This works but requires external dependencies.
+            </p>
+            <p className="text-muted-foreground">
+              <strong>Sendly's CLI takes a different approach:</strong> instead of making your machine publicly accessible, it establishes an outbound WebSocket connection to Sendly's servers. Events are pushed through this existing connection - no firewall configuration needed.
+            </p>
+          </div>
+        ),
+        codeBlocks: [
+          {
+            title: "Local Webhook Testing",
+            language: "bash",
+            code: `# Start local webhook listener
+sendly webhooks listen --forward http://localhost:3000/webhook
+
+# The CLI establishes a WebSocket connection
+# Events flow: Sendly -> WebSocket -> CLI -> Your local server`,
+          },
+        ],
+      },
+      {
+        id: "environment-pattern",
+        title: "Environment Variable Pattern",
+        content: (
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              API keys should never appear in source code. When your app reads <code className="text-primary">SENDLY_API_KEY</code> from the environment, you can swap between test and production by changing a single value.
+            </p>
+            <ul className="list-disc list-inside text-muted-foreground space-y-1">
+              <li><strong>Local development:</strong> Test key in <code>.env</code></li>
+              <li><strong>CI/CD pipeline:</strong> Test key in secrets</li>
+              <li><strong>Staging:</strong> Test key (or live key with test data)</li>
+              <li><strong>Production:</strong> Live key</li>
+            </ul>
+            <p className="text-muted-foreground">
+              Same code, different behavior based on context.
+            </p>
+          </div>
+        ),
+      },
+    ],
+  },
 };

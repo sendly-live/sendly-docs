@@ -45,6 +45,12 @@ const SIDE_NAV = [
     ],
   },
   {
+    title: "Verify",
+    items: [
+      { name: "Verify API", href: "/docs/verify" },
+    ],
+  },
+  {
     title: "Credits & Billing",
     items: [
       { name: "Get Balance", href: "/docs/credits" },
@@ -68,6 +74,31 @@ const SIDE_NAV = [
     items: [
       { name: "CLI", href: "/docs/cli" },
       { name: "LLM Integration", href: "/docs/llms" },
+    ],
+  },
+  {
+    title: "Tutorials",
+    items: [
+      { name: "Overview", href: "/docs/tutorials" },
+      { name: "Send Your First SMS", href: "/docs/tutorials/send-sms" },
+      { name: "Phone Verification", href: "/docs/tutorials/otp" },
+      { name: "Set Up Webhooks", href: "/docs/tutorials/webhooks" },
+    ],
+  },
+  {
+    title: "How-To Guides",
+    items: [
+      { name: "Overview", href: "/docs/how-to" },
+      { name: "Test Webhooks Locally", href: "/docs/how-to/test-webhooks-locally" },
+      { name: "Handle OTP Errors", href: "/docs/how-to/handle-otp-errors" },
+      { name: "Resend OTP Codes", href: "/docs/how-to/resend-otp" },
+    ],
+  },
+  {
+    title: "Concepts",
+    items: [
+      { name: "Overview", href: "/docs/concepts" },
+      { name: "Local Development", href: "/docs/concepts/local-development" },
     ],
   },
 ];
